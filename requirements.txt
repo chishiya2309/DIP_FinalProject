@@ -1,0 +1,34 @@
+# ============================================
+# Fall Detection System - Dependencies
+# ============================================
+# Install: pip install -r requirements.txt
+# ============================================
+
+# --- Core ---
+numpy
+scipy
+
+# --- Image Processing (DIP) ---
+opencv-python
+opencv-contrib-python
+
+# --- Pose Estimation ---
+ultralytics               # YOLOv8-Pose
+
+# --- Deep Learning Framework ---
+torch
+torchvision
+torchaudio
+
+# --- Data & Evaluation ---
+scikit-learn
+pandas
+matplotlib
+seaborn
+
+# --- Notebook & Development ---
+jupyter
+tqdm
+
+# --- Video/Audio Alerting ---
+playsound

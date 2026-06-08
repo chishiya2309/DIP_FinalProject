@@ -1,0 +1,53 @@
+# ============================================
+# Fall Detection System - .gitignore
+# ============================================
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# --- Virtual Environment ---
+venv/
+.venv/
+env/
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Data (too large for git) ---
+data/raw/
+data/processed/
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# --- Models (too large for git) ---
+models/pretrained/*.pt
+models/pretrained/*.pth
+models/pretrained/*.onnx
+models/checkpoints/
+
+# --- Outputs ---
+outputs/logs/
+outputs/visualizations/
+outputs/metrics/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Misc ---
+*.log
+*.tmp

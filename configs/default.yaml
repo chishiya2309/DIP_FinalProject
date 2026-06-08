@@ -1,0 +1,60 @@
+# ============================================
+# Fall Detection System - Configuration
+# ============================================
+
+# --- Paths ---
+paths:
+  data_raw: "data/raw"
+  data_processed: "data/processed"
+  models_pretrained: "models/pretrained"
+  models_checkpoints: "models/checkpoints"
+  outputs: "outputs"
+
+# --- Preprocessing (DIP) ---
+preprocessing:
+  gaussian_blur:
+    kernel_size: 5        # Kích thước kernel Gaussian
+    sigma: 1.0            # Độ lệch chuẩn
+  clahe:
+    clip_limit: 2.0       # Giới hạn tương phản CLAHE
+    tile_grid_size: [8, 8] # Kích thước lưới
+
+# --- YOLOv8-Pose ---
+pose_estimation:
+  model: "yolov8n-pose.pt"  # nano model cho tốc độ
+  confidence_threshold: 0.5
+  num_keypoints: 17          # COCO keypoints
+
+# --- Sliding Window ---
+sliding_window:
+  window_size: 30    # T frames per clip
+  stride: 10         # Bước trượt S
+
+# --- PoseC3D ---
+posec3d:
+  heatmap_size: [56, 56]   # H x W của pseudo-heatmap
+  num_classes: 2            # FALL, NON-FALL
+  pretrained_weights: null  # Đường dẫn tới pre-trained weights
+
+# --- Training ---
+training:
+  batch_size: 16
+  learning_rate: 0.001
+  epochs: 50
+  loss_function: "focal_loss"
+  focal_loss_gamma: 2.0
+  optimizer: "adam"
+  scheduler: "cosine"
+
+# --- Alerting ---
+alerting:
+  fall_threshold: 0.7      # Ngưỡng Softmax để kích hoạt cảnh báo
+  alert_sound: "assets/alert.wav"
+  bbox_color: [0, 0, 255]  # Đỏ (BGR)
+  bbox_thickness: 3
+
+# --- System ---
+system:
+  target_fps: 25
+  device: "cuda"           # cuda hoặc cpu
+  seed: 42
