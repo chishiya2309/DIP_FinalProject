@@ -6,3 +6,5 @@
 #   - Output: (x_i, y_i, c_i) cho mỗi keypoint trên mỗi frame
 #
 # Pipeline position: Stage 2 - Preprocessing → [THIS] → Sliding Window
+
+from src.pose_estimation.keypoint_extractor import COCO_KEYPOINT_NAMES, KeypointExtractor
