@@ -7,6 +7,7 @@
 # --- Core ---
 numpy
 scipy
+pyyaml                    # Đọc config YAML
 
 # --- Image Processing (DIP) ---
 opencv-python
