@@ -27,7 +27,6 @@ env/
 
 # --- Data (too large for git) ---
 data/raw/
-data/processed/
 *.mp4
 *.avi
 *.mov
