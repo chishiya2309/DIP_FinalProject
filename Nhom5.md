@@ -85,15 +85,15 @@ Description automatically generated](media/image1.png){width="1.5666666666666667
 
 [2.5.1. Tầm quan trọng của phân tích chuỗi thời gian so với phân tích khung hình tĩnh (Static frame) [7](#_Toc231759753)](#_Toc231759753)
 
-[2.5.2. Chuyển đổi dữ liệu động học: Từ Skeleton Sequence sang 3D Pseudo-Heatmaps (Bản đồ nhiệt giả 3D) [7](#_Toc231759754)](#_Toc231759754)
+[2.5.2. Chuyển đổi dữ liệu động học: Trích xuất đặc trưng vật lý và chuẩn hóa tư thế (Pose Normalization) [7](#_Toc231759754)](#_Toc231759754)
 
-[2.5.2. Kiến trúc mạng PoseC3D: Cơ chế phân tích luồng không gian - thời gian bằng 3D Convolution [7](#_Toc231759755)](#_Toc231759755)
+[2.5.3. Kiến trúc mạng PoseBiGRU: Cơ chế phân tích luồng không gian - thời gian bằng BiGRU và Attention [7](#_Toc231759755)](#_Toc231759755)
 
 [2.6. Học chuyển giao (Transfer Learning) và chiến lược Fine-tuning [7](#_Toc231759756)](#_Toc231759756)
 
 [2.6.1. Nguyên lý học chuyển giao và tính cấp thiết trong bài toán phát hiện té ngã [7](#_Toc231759757)](#_Toc231759757)
 
-[2.6.2. Phân tích mô hình PoseC3D tiền huấn luyện (Pre-trained on NTU RGB+D/Kinetics) [7](#_Toc231759758)](#_Toc231759758)
+[2.6.2. Phân tích mô hình PoseBiGRU tiền huấn luyện (Pre-trained on NTU RGB+D/Kinetics) [7](#_Toc231759758)](#_Toc231759758)
 
 [2.6.3. Kỹ thuật Data Augmentation (Tăng cường dữ liệu) chuyên biệt cho skeleton sequence [7](#_Toc231759759)](#_Toc231759759)
 
@@ -109,7 +109,7 @@ Description automatically generated](media/image1.png){width="1.5666666666666667
 
 [3.4. Mô hình hóa chuỗi động học bằng cửa sổ trượt (Sliding Window) [9](#_Toc231759765)](#_Toc231759765)
 
-[3.5. Phân loại hành vi té ngã bằng mạng PoseC3D [9](#_Toc231759766)](#_Toc231759766)
+[3.5. Phân loại hành vi té ngã bằng mạng PoseBiGRU [9](#_Toc231759766)](#_Toc231759766)
 
 [3.6. Module cảnh báo thời gian thực (Real-time Alerting) [10](#_Toc231759767)](#_Toc231759767)
 
@@ -240,15 +240,15 @@ Một thách thức đặc thù đối với các hệ thống giám sát chăm 
 
 []{#_Toc231759753 .anchor}2.5.1. Tầm quan trọng của phân tích chuỗi thời gian so với phân tích khung hình tĩnh (Static frame)
 
-[]{#_Toc231759754 .anchor}2.5.2. Chuyển đổi dữ liệu động học: Từ Skeleton Sequence sang 3D Pseudo-Heatmaps (Bản đồ nhiệt giả 3D)
+[]{#_Toc231759754 .anchor}2.5.2. Chuyển đổi dữ liệu động học: Trích xuất đặc trưng vật lý và chuẩn hóa tư thế (Pose Normalization)
 
-[]{#_Toc231759755 .anchor}2.5.2. Kiến trúc mạng PoseC3D: Cơ chế phân tích luồng không gian - thời gian bằng 3D Convolution
+[]{#_Toc231759755 .anchor}2.5.3. Kiến trúc mạng PoseBiGRU: Cơ chế phân tích luồng không gian - thời gian bằng BiGRU và Attention
 
 []{#_Toc231759756 .anchor}2.6. Học chuyển giao (Transfer Learning) và chiến lược Fine-tuning
 
 []{#_Toc231759757 .anchor}2.6.1. Nguyên lý học chuyển giao và tính cấp thiết trong bài toán phát hiện té ngã
 
-[]{#_Toc231759758 .anchor}2.6.2. Phân tích mô hình PoseC3D tiền huấn luyện (Pre-trained on NTU RGB+D/Kinetics)
+[]{#_Toc231759758 .anchor}2.6.2. Phân tích mô hình PoseBiGRU tiền huấn luyện (Pre-trained on NTU RGB+D/Kinetics)
 
 []{#_Toc231759759 .anchor}2.6.3. Kỹ thuật Data Augmentation (Tăng cường dữ liệu) chuyên biệt cho skeleton sequence
 
@@ -289,19 +289,17 @@ Cửa sổ có kích thước $T$ frames (ví dụ: $T$ = 30 hoặc 40 frames) s
 
 Kết quả thu được là một chuỗi tư thế (Pose Sequence) mô tả quỹ đạo chuyển động của 17 điểm neo trong một khoảng thời gian ngắn (tương đương 1-2 giây thực tế). Chuỗi dữ liệu không gian - thời gian này sẽ là đầu vào cho bộ phân loại hành vi.
 
-[]{#_Toc231759766 .anchor}3.5. Phân loại hành vi té ngã bằng mạng PoseC3D
+[]{#_Toc231759766 .anchor}3.5. Phân loại hành vi té ngã bằng mạng PoseBiGRU
 
-Để xử lý chuỗi Pose Sequence và đưa ra quyết định phân loại cuối cùng (Fall hoặc Non-Fall), hệ thống tích hợp kiến trúc mạng nơ-ron tích chập 3D (PoseC3D).
+Để xử lý chuỗi Pose Sequence và đưa ra quyết định phân loại cuối cùng (Fall hoặc Non-Fall), hệ thống tích hợp kiến trúc mạng nơ-ron hồi quy hai chiều kết hợp cơ chế chú ý (PoseBiGRU Attention).
 
-Tạo bản đồ nhiệt 3D (3D Pseudo-heatmaps): Thay vì xử lý trực tiếp mảng tọa độ tọa độ dễ bị nhiễu do hiện tượng che khuất (occlusion) làm mất keypoints, các chuỗi tọa độ được biến đổi thành các bản đồ nhiệt giả 3D có kích thước $H$ \* $W$ \* $T$. Cách tiếp cận này giúp mô hình đạt độ bền vững (robustness) cực cao ngay cả khi người cao tuổi bị che khuất một phần cơ thể bởi đồ nội thất.
+Chuẩn hóa tư thế và trích xuất đặc trưng vật lý: Thay vì xử lý trực tiếp mảng tọa độ dễ bị nhiễu do hiện tượng che khuất hoặc thay đổi khoảng cách camera, chuỗi tọa độ sẽ đi qua một lớp chuẩn hóa tự động (Learnable Pose Normalization). Lớp này tính toán ra các đặc trưng vật lý quan trọng như: trọng tâm cơ thể, vận tốc và gia tốc các khớp, góc của cột sống và khoảng cách từ đầu đến sàn. Cách tiếp cận này giúp mô hình đạt độ bền vững (robustness) cực cao, không bị phụ thuộc vào kích thước người hay vị trí góc quay.
 
-**Tinh chỉnh mô hình (Fine-tuning):** Mạng PoseC3D sẽ được huấn luyện tinh chỉnh (fine-tune) trên bộ dữ liệu do nhóm thu thập. Để giải quyết bài toán mất cân bằng dữ liệu (Imbalanced Data) giữa tần suất ngã và sinh hoạt bình thường, hàm mất mát Focal Loss sẽ được sử dụng kết hợp với việc bổ sung các mẫu âm tính khó (Hard Negative Samples) - bao gồm các hành động dễ gây nhầm lẫn như: cúi người nhặt đồ, ngồi phịch xuống ghế sofa, hoặc nằm nghỉ.
-
-*Phương án dự phòng (Fallback Plan):* Trong trường hợp việc suy luận bằng 3D-CNN trên phần cứng thực tế vượt quá khả năng xử lý thời gian thực, module này sẽ được tối ưu hóa hoặc thay thế bằng các kiến trúc chuỗi thời gian nhẹ hơn như Mạng nơ-ron hồi quy bộ nhớ ngắn hạn (LSTM) hoặc Mạng CNN 1D kết hợp cơ chế chú ý (1D-CNN + Attention) nhằm đảm bảo tiêu chí \> 25 FPS.
+**Huấn luyện mô hình (Training):** Mạng PoseBiGRU sẽ được huấn luyện trên bộ dữ liệu NTU RGB+D kết hợp với các dữ liệu đặc thù về té ngã do nhóm thu thập. Việc sử dụng mạng GRU kết hợp cơ chế Temporal Attention giúp mô hình tập trung vào các khung hình có biến động mạnh nhất (thời điểm chạm đất), đồng thời giảm đáng kể số lượng tham số so với các mạng 3D-CNN, đảm bảo tốc độ suy luận (inference) đạt trên 30 FPS ngay cả trên thiết bị phần cứng hạn chế (CPU).
 
 []{#_Toc231759767 .anchor}3.6. Module cảnh báo thời gian thực (Real-time Alerting)
 
-Khi hàm kích hoạt Softmax ở lớp đầu ra của PoseC3D dự đoán nhãn **Fall** với xác suất vượt qua ngưỡng (Threshold) được tinh chỉnh thực nghiệm, hệ thống sẽ lập tức tạo ra cờ báo động (Alert Flag). Tín hiệu này kích hoạt âm thanh cảnh báo tại loa giám sát và đánh dấu khung viền đỏ nổi bật trên màn hình của người chăm sóc, đảm bảo thời gian trễ từ lúc chạm sàn đến lúc cảnh báo là tối thiểu.
+Khi hàm kích hoạt Softmax ở lớp đầu ra của PoseBiGRU dự đoán nhãn **Fall** với xác suất vượt qua ngưỡng (Threshold) được tinh chỉnh thực nghiệm, hệ thống sẽ lập tức tạo ra cờ báo động (Alert Flag). Tín hiệu này kích hoạt âm thanh cảnh báo tại loa giám sát và đánh dấu khung viền đỏ nổi bật trên màn hình của người chăm sóc, đảm bảo thời gian trễ từ lúc chạm sàn đến lúc cảnh báo là tối thiểu.
 
 []{#_Toc231759768 .anchor}PHẦN 4: THỰC NGHIỆM VÀ ĐÁNH GIÁ HỆ THỐNG
 
@@ -315,9 +313,9 @@ Thư viện xử lý ảnh và trích xuất đặc trưng: \* OpenCV (cv2): Tri
 
 Ultralytics: Triển khai mô hình tiền huấn luyện YOLOv8-Pose để trích xuất tọa độ 17 điểm neo (COCO keypoints).
 
-Framework Học sâu (Deep Learning): PyTorch hoặc TensorFlow để xây dựng, tinh chỉnh (fine-tune) và suy luận mạng PoseC3D. Sử dụng thư viện NumPy và Scikit-learn để xử lý ma trận chuỗi thời gian và đánh giá mô hình.
+Framework Học sâu (Deep Learning): PyTorch để xây dựng, huấn luyện và suy luận mạng PoseBiGRU. Sử dụng thư viện NumPy và Scikit-learn để xử lý ma trận chuỗi thời gian và đánh giá mô hình.
 
-Yêu cầu phần cứng: Môi trường huấn luyện đòi hỏi bộ xử lý đồ họa (GPU) có hỗ trợ kiến trúc CUDA (NVIDIA) để tăng tốc độ tính toán cho các phép tích chập 3D.
+Yêu cầu phần cứng: Môi trường huấn luyện có thể dùng GPU cơ bản, nhưng quá trình suy luận (inference) thực tế hoàn toàn có thể chạy mượt mà trên CPU đa luồng (Multi-core CPU).
 
 []{#_Toc231759770 .anchor}4.2. Bộ dữ liệu (Dataset) và quy trình chuẩn bị dữ liệu
 
@@ -327,7 +325,7 @@ Thu thập dữ liệu thô (Raw Videos): Kết hợp các bộ dữ liệu vide
 
 Tiền xử lý và chuyển đổi dữ liệu (Data Preparation): Toàn bộ video thô sẽ được chạy qua module YOLOv8-Pose để trích xuất tọa độ khung xương. Dữ liệu sau trích xuất được định dạng thành các chuỗi không gian - thời gian (Skeleton Sequences) và áp dụng thuật toán cửa sổ trượt (Sliding Window) để cắt thành các clip ngắn (ví dụ: 30 frames/clip).
 
-Tăng cường dữ liệu (Data Augmentation): Áp dụng các kỹ thuật tăng cường đặc thù cho chuỗi 3D như: xoay góc ngẫu nhiên (random rotation) để giả lập các góc đặt camera khác nhau, và cắt xén trục thời gian (temporal cropping) để tăng tính tổng quát cho mô hình PoseC3D.
+Tăng cường dữ liệu (Data Augmentation): Áp dụng các kỹ thuật tăng cường đặc thù cho chuỗi Pose như: cắt xén trục thời gian (temporal cropping) và mô phỏng thay đổi vận tốc để tăng tính tổng quát cho mô hình PoseBiGRU.
 
 []{#_Toc231759771 .anchor}4.3. Các độ đo đánh giá hiệu năng (Evaluation Metrics)
 
@@ -345,7 +343,7 @@ Tỷ lệ báo động giả (False Alarm Rate - FAR): Tần suất hệ thống
 
 **Đánh giá hiệu năng hệ thống (System Performance):**
 
-Tốc độ khung hình (FPS): Đo lường tổng thời gian nội suy của toàn bộ luồng pipeline (từ bước tiền xử lý DIP → YOLOv8 → PoseC3D) nhằm đảm bảo tiêu chí xử lý ≥ 25 FPS.
+Tốc độ khung hình (FPS): Đo lường tổng thời gian nội suy của toàn bộ luồng pipeline (từ bước tiền xử lý DIP → YOLOv8-Pose → PoseBiGRU) nhằm đảm bảo tiêu chí xử lý ≥ 25 FPS.
 
 Độ trễ cảnh báo (Latency): Thời gian tính từ khi kết thúc hành vi ngã trên video đến khi hệ thống phát tín hiệu cảnh báo.
 
@@ -355,11 +353,11 @@ Mô hình sau khi fine-tune sẽ được chạy thực nghiệm qua các kịch
 
 Kịch bản Positive (Té ngã thực tế): Đánh giá các véc-tơ chuyển động ngã có tính đa dạng sinh học cao (ngã chúi về phía trước do vấp, ngã ngửa do trượt chân, ngã khụy gối do choáng váng).
 
-Kịch bản Hard-Negative (Hành vi gây nhiễu): Thử nghiệm trên các hành vi sinh hoạt hàng ngày (ADLs) có quỹ đạo trọng tâm hạ thấp đột ngột (như ngồi phịch xuống ghế sofa, cúi gập người thắt dây giày, nhặt đồ rơi, hoặc chủ động nằm ra sàn/giường). Đây là kịch bản để chứng minh sự vượt trội của mạng 3D-CNN so với phương pháp xét ngưỡng Bounding Box truyền thống.
+Kịch bản Hard-Negative (Hành vi gây nhiễu): Thử nghiệm trên các hành vi sinh hoạt hàng ngày (ADLs) có quỹ đạo trọng tâm hạ thấp đột ngột (như ngồi phịch xuống ghế sofa, cúi gập người thắt dây giày, nhặt đồ rơi, hoặc chủ động nằm ra sàn/giường). Đây là kịch bản để chứng minh sự vượt trội của mạng trích xuất đặc trưng vật lý so với phương pháp xét ngưỡng Bounding Box truyền thống.
 
 Kịch bản Thử thách môi trường (Environmental Robustness): Thiếu sáng/Ngược sáng: Kiểm tra hiệu quả của module Tiền xử lý (Cân bằng lược đồ xám CLAHE) trước khi đưa vào YOLO.
 
-Bị che khuất (Occlusion): Thử nghiệm kịch bản đối tượng bị che khuất một phần cơ thể (bởi bàn, ghế, tủ) khi ngã để kiểm chứng khả năng nội suy bù đắp điểm neo (pseudo-heatmaps) của thuật toán PoseC3D.
+Bị che khuất (Occlusion): Thử nghiệm kịch bản đối tượng bị che khuất một phần cơ thể (bởi bàn, ghế, tủ) khi ngã để kiểm chứng khả năng xử lý thiếu hụt điểm neo (confidence score thấp) của thuật toán PoseBiGRU.
 
 # References
 
