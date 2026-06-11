@@ -120,9 +120,10 @@ def enhance_frame(frame: np.ndarray, config_manager) -> np.ndarray:
     # --- Logic thich nghi (Conservative Adaptive Rules) ---
     if config.get("auto_detect", True):
         
-        # 1. KHU NHIEU: Chi khi noise thuc su cao
+        # 1. KHU NHIEU: Kich hoat khi noise thuc su co dau hieu xuat hien (noise > 1.5)
+        # Nguong 1.5 (giam tu 2.2) de bat Bilateral filter som hon, xoa sach "nhieu chay" (temporal noise)
         should_denoise = (
-            (conditions["noise_level"] > 2.2) or
+            (conditions["noise_level"] > 1.5) or
             (conditions["brightness"] < 60.0)
         )
         # Nhieu rat nang -> tang thong so Bilateral
@@ -156,9 +157,13 @@ def enhance_frame(frame: np.ndarray, config_manager) -> np.ndarray:
             should_sharpen = False
         else:
             should_sharpen = conditions["sharpness"] < sharpen_cfg.get("sharpness_threshold", 150.0)
-            # Nhieu trung binh -> giam suc manh sharpen de an toan
-            if should_sharpen and conditions["noise_level"] > 2.2:
-                sharpen_cfg["strength"] = min(sharpen_cfg.get("strength", 1.5), 0.6)
+            # Nhieu trung binh/nhe (noise > 1.5) -> tu dong giam dan suc manh lam net
+            # Tranh hien tuong khuyech dai hat nhieu gay "nhieu chay" tren background phẳng
+            if should_sharpen and conditions["noise_level"] > 1.5:
+                orig_strength = sharpen_cfg.get("strength", 2.0)
+                # Tinh factor giam dan: noise=1.5 -> factor=1.0; noise=3.5 -> factor=0.2
+                factor = max(0.2, 1.0 - (conditions["noise_level"] - 1.5) / 2.5)
+                sharpen_cfg["strength"] = float(orig_strength * factor)
 
         # 5. CLAHE: Chi khi anh thieu tuong phan thuc su
         # Anh da co tuong phan tot -> CLAHE se lam phang va lam toi anh

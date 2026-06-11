@@ -22,7 +22,7 @@ class VideoPanel(ctk.CTkLabel):
         if self._update_job is not None:
             self.after_cancel(self._update_job)
             self._update_job = None
-        self.configure(image="", text="[Đã Dừng Camera]")
+        self.configure(image=None, text="[Đã Dừng Camera]")
 
     def update_frame(self):
         if not self.is_playing or not self.camera_manager:
