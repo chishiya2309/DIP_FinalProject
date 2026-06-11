@@ -50,3 +50,5 @@ Thumbs.db
 # --- Misc ---
 *.log
 *.tmp
+train_hung/archive
+*.pkl
