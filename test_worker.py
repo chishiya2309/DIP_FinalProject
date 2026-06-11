@@ -21,7 +21,7 @@ def main():
         model_path=args.model_path,
         yolo_model=args.yolo_model,
         device=args.device,
-        conf_threshold=args.conf_threshold,
+        conf_threshold=0.30,
     )
     
     cap = cv2.VideoCapture(args.video)

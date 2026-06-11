@@ -27,9 +27,11 @@ ManifestRow = dict[str, Any]
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset-source", choices=["manifest", "ntu-hrnet"], default="manifest")
+    parser.add_argument("--dataset-source", choices=["manifest", "ntu-hrnet", "custom", "combined"], default="manifest")
     parser.add_argument("--pose-dir", default="data/omnifall_pose/of-sta-cs")
     parser.add_argument("--ntu-pkl", default="data/ntu60_hrnet.pkl")
+    parser.add_argument("--custom-train-pkl", default="data/processed/mmaction/train_data.pkl")
+    parser.add_argument("--custom-val-pkl", default="data/processed/mmaction/val_data.pkl")
     parser.add_argument("--ntu-protocol", choices=["xsub", "xview"], default="xsub")
     parser.add_argument("--output-dir", default="runs/fall_detection")
     parser.add_argument("--train-split", default="train")
@@ -192,6 +194,108 @@ class PoseWindowDataset(Dataset):
 
         output[:, :, 2] = np.clip(output[:, :, 2], 0.0, 1.0)
 
+        return output, output_timestamps, mask
+
+    def labels(self) -> list[int]:
+        return [int(sample["label"]) for sample in self.samples]
+
+
+class CustomFallDataset(Dataset):
+    def __init__(
+        self,
+        pkl_path: Path,
+        sequence_length: int,
+        fps: float,
+        training: bool,
+        max_samples: int | None = None,
+        seed: int = 42,
+    ) -> None:
+        self.sequence_length = sequence_length
+        self.fps = fps
+        self.training = training
+
+        if not pkl_path.is_file():
+            raise FileNotFoundError(f"Pickle not found: {pkl_path}")
+
+        with pkl_path.open("rb") as file:
+            samples = pickle.load(file)
+            
+        self.samples = self.limit_samples(samples, max_samples, seed)
+
+    def limit_samples(self, samples: list[dict[str, Any]], max_samples: int | None, seed: int) -> list[dict[str, Any]]:
+        if max_samples is None or len(samples) <= max_samples:
+            return samples
+        rng = random.Random(seed)
+        positives = [sample for sample in samples if sample["label"] == 1]
+        negatives = [sample for sample in samples if sample["label"] == 0]
+        rng.shuffle(positives)
+        rng.shuffle(negatives)
+        positive_count = min(len(positives), max_samples // 2)
+        negative_count = max_samples - positive_count
+        selected = positives[:positive_count] + negatives[:negative_count]
+        rng.shuffle(selected)
+        return selected
+
+    def __len__(self) -> int:
+        return len(self.samples)
+
+    def select_person(self, scores: np.ndarray) -> int:
+        if scores.shape[0] == 1:
+            return 0
+        return int(scores.mean(axis=(1, 2)).argmax())
+
+    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        sample = self.samples[index]
+        keypoints = sample["keypoint"].astype(np.float32)
+        scores = sample["keypoint_score"].astype(np.float32)
+        
+        person_index = self.select_person(scores)
+        xy = keypoints[person_index]
+        confidence = scores[person_index]
+        pose = np.concatenate((xy, confidence[..., None]), axis=-1).astype(np.float32)
+        timestamps = np.arange(pose.shape[0], dtype=np.float32) / np.float32(self.fps)
+        
+        pose, timestamps, mask = self.fit_sequence(pose, timestamps)
+
+        return (
+            torch.from_numpy(pose),
+            torch.from_numpy(timestamps),
+            torch.from_numpy(mask),
+            torch.tensor(sample["label"], dtype=torch.long),
+        )
+
+    def fit_sequence(self, keypoints: np.ndarray, timestamps: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        length = keypoints.shape[0]
+        output = np.zeros((self.sequence_length, 17, 3), dtype=np.float32)
+        output_timestamps = np.zeros(self.sequence_length, dtype=np.float32)
+        mask = np.zeros(self.sequence_length, dtype=bool)
+
+        if length >= self.sequence_length:
+            max_start = length - self.sequence_length
+            if self.training and max_start > 0:
+                start = random.randint(0, max_start)
+            else:
+                start = max_start // 2
+
+            end = start + self.sequence_length
+            output[:] = keypoints[start:end]
+            output_timestamps[:] = timestamps[start:end]
+            mask[:] = True
+        else:
+            output[:length] = keypoints
+            output_timestamps[:length] = timestamps
+
+            if length > 0:
+                start_time = output_timestamps[length - 1]
+            else:
+                start_time = 0.0
+
+            for index in range(length, self.sequence_length):
+                output_timestamps[index] = start_time + (index - length + 1) / self.fps
+
+            mask[:length] = True
+
+        output[:, :, 2] = np.clip(output[:, :, 2], 0.0, 1.0)
         return output, output_timestamps, mask
 
     def labels(self) -> list[int]:
@@ -600,6 +704,36 @@ def main() -> None:
             max_samples=args.max_val_samples,
             seed=args.seed,
         )
+    elif args.dataset_source == "custom":
+        train_dataset = CustomFallDataset(
+            Path(args.custom_train_pkl),
+            args.sequence_length,
+            fps,
+            training=True,
+            max_samples=args.max_train_samples,
+            seed=args.seed,
+        )
+        val_dataset = CustomFallDataset(
+            Path(args.custom_val_pkl),
+            args.sequence_length,
+            fps,
+            training=False,
+            max_samples=args.max_val_samples,
+            seed=args.seed,
+        )
+    elif args.dataset_source == "combined":
+        train_split = f"{args.ntu_protocol}_train"
+        val_split = f"{args.ntu_protocol}_val"
+        
+        ntu_train = NtuHrnetPoseDataset(Path(args.ntu_pkl), train_split, {42}, args.sequence_length, fps, True, args.max_train_samples, args.seed)
+        custom_train = CustomFallDataset(Path(args.custom_train_pkl), args.sequence_length, fps, True, args.max_train_samples, args.seed)
+        train_dataset = torch.utils.data.ConcatDataset([ntu_train, custom_train])
+        train_dataset.labels = lambda: ntu_train.labels() + custom_train.labels()
+        
+        ntu_val = NtuHrnetPoseDataset(Path(args.ntu_pkl), val_split, {42}, args.sequence_length, fps, False, args.max_val_samples, args.seed)
+        custom_val = CustomFallDataset(Path(args.custom_val_pkl), args.sequence_length, fps, False, args.max_val_samples, args.seed)
+        val_dataset = torch.utils.data.ConcatDataset([ntu_val, custom_val])
+        val_dataset.labels = lambda: ntu_val.labels() + custom_val.labels()
     else:
         train_dataset = PoseWindowDataset(
             Path(args.pose_dir) / args.train_split / "manifest.csv",
@@ -614,7 +748,7 @@ def main() -> None:
             fps,
         )
 
-    use_balanced_sampler = args.balanced_sampler or args.dataset_source == "ntu-hrnet"
+    use_balanced_sampler = args.balanced_sampler or args.dataset_source in ["ntu-hrnet", "custom", "combined"]
 
     if args.disable_balanced_sampler:
         use_balanced_sampler = False
