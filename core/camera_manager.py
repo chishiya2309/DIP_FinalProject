@@ -32,7 +32,14 @@ class CameraManager:
             self.enhance_config.is_calibrated = False
 
     def _update_frames(self):
+        import time
+        fps = self.cap.get(cv2.CAP_PROP_FPS)
+        if fps <= 0 or fps > 120:
+            fps = 30.0
+        frame_delay = 1.0 / fps
+        
         while self.running:
+            start_time = time.time()
             ret, frame = self.cap.read()
             if not ret:
                 # Nếu là video file, loop lại
@@ -55,6 +62,10 @@ class CameraManager:
             
             with self.lock:
                 self.latest_frame = frame_rgb
+                
+            elapsed = time.time() - start_time
+            if elapsed < frame_delay:
+                time.sleep(frame_delay - elapsed)
 
     def get_frame(self):
         with self.lock:

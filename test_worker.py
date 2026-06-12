@@ -8,7 +8,7 @@ def main():
     parser = argparse.ArgumentParser(description="Test FallDetectorWorker standalone")
     parser.add_argument("--video", type=str, default="data/sample_fall.mp4", help="Path to input video")
     parser.add_argument("--model-path", type=str, default="train_hung/runs/fall_detection/best.pt", help="Path to trained PoseBiGRU model")
-    parser.add_argument("--yolo-model", type=str, default="yolov8n-pose.pt", help="Path to YOLOv8-pose model")
+    parser.add_argument("--yolo-model", type=str, default="yolo11s-pose.pt", help="Path to YOLO11-pose model")
     parser.add_argument("--conf-threshold", type=float, default=0.5, help="Fall confidence threshold")
     parser.add_argument("--device", type=str, default="auto", help="Device to run inference on (auto, cpu, cuda, mps)")
     
@@ -21,7 +21,7 @@ def main():
         model_path=args.model_path,
         yolo_model=args.yolo_model,
         device=args.device,
-        conf_threshold=0.30,
+        conf_threshold=args.conf_threshold,
     )
     
     cap = cv2.VideoCapture(args.video)
@@ -29,8 +29,11 @@ def main():
         print(f"Error: Could not open video source {args.video}")
         return
         
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    if fps <= 0:
+        fps = 24.0
+        
     frame_idx = 0
-    start_time = time.time()
     
     print("Starting inference. Press 'q' to quit.")
     
@@ -40,8 +43,8 @@ def main():
             print("End of video stream.")
             break
             
-        current_time = time.time() - start_time
         frame_idx += 1
+        current_time = frame_idx / fps
         
         # We simulate the exact logic that CameraManager would do
         annotated_frame, fall_probs = worker.process_frame(frame, current_time)

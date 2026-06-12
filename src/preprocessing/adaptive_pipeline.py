@@ -18,7 +18,15 @@ def analyze_frame_conditions(frame: np.ndarray) -> dict:
         - has_backlight: Co bi nguoc sang hay khong (bool)
         - contrast_ratio: std(L) / mean(L) - do tuong phan tuong doi
     """
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # Resize để phân tích cho lẹ, giảm tải RAM và CPU
+    h, w = frame.shape[:2]
+    if w > 640:
+        scale = 640 / w
+        analysis_frame = cv2.resize(frame, (640, int(h * scale)))
+    else:
+        analysis_frame = frame
+
+    gray = cv2.cvtColor(analysis_frame, cv2.COLOR_BGR2GRAY)
     
     # 1. Do sang trung binh
     brightness = float(np.mean(gray))
@@ -33,19 +41,19 @@ def analyze_frame_conditions(frame: np.ndarray) -> dict:
     noise_level = float(np.std(noise_diff))
     
     # 4. Lech mau (color cast)
-    b, g, r = cv2.split(frame)
+    b, g, r = cv2.split(analysis_frame)
     mean_b = np.mean(b)
     mean_g = np.mean(g)
     mean_r = np.mean(r)
     color_cast = float(np.std([mean_b, mean_g, mean_r]))
     
     # 5. Nguoc sang
-    has_backlight = detect_backlight(frame)
+    has_backlight = detect_backlight(analysis_frame)
     
     # 6. Tuong phan tuong doi: std(L) / mean(L)
     # - Anh tot: contrast_ratio > 0.40
     # - Anh thieu tuong phan: contrast_ratio < 0.35
-    lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
+    lab = cv2.cvtColor(analysis_frame, cv2.COLOR_BGR2LAB)
     l_channel = lab[:, :, 0].astype(np.float32)
     contrast_ratio = float(np.std(l_channel)) / (float(np.mean(l_channel)) + 1e-6)
     
