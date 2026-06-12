@@ -4,6 +4,7 @@ from ui.views.admin_view import AdminView
 from ui.views.client_view import ClientView
 from ui.components.sidebar import Sidebar
 from core.camera_manager import CameraManager
+from core.inference_manager import InferenceManager
 
 class MainApp(ctk.CTk):
     def __init__(self):
@@ -28,6 +29,7 @@ class MainApp(ctk.CTk):
         self.view_container.grid_columnconfigure(0, weight=1)
         
         self.camera_manager = CameraManager(source=0)
+        self.inference_manager = InferenceManager(self.camera_manager)
         
         self.views = {}
         
@@ -37,6 +39,7 @@ class MainApp(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def on_closing(self):
+        self.inference_manager.stop()
         self.camera_manager.stop()
         self.destroy()
 

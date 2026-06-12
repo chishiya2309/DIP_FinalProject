@@ -53,4 +53,8 @@ Thumbs.db
 train_hung/archive
 *.pkl
 .agents/
+*.pt
+*.pth
+*.weights
+*.mp4
 
