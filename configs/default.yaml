@@ -19,9 +19,9 @@ preprocessing:
     clip_limit: 2.0       # Giới hạn tương phản CLAHE
     tile_grid_size: [8, 8] # Kích thước lưới
 
-# --- YOLOv8-Pose ---
+# --- YOLO11-Pose ---
 pose_estimation:
-  model: "yolov8n-pose.pt"  # nano model cho tốc độ
+  model: "yolo11s-pose.pt"  # Đồng bộ với inference_worker (Small model)
   confidence_threshold: 0.5
   num_keypoints: 17          # COCO keypoints
 

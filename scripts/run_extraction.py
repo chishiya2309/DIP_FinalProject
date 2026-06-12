@@ -1,7 +1,7 @@
 """
 Script chạy Pipeline trích xuất keypoints end-to-end.
 
-Luồng xử lý: Video → Gaussian Blur → CLAHE → YOLOv8-Pose → JSON output
+Luồng xử lý: Video → Gaussian Blur → CLAHE → YOLO11-Pose → JSON output
 
 Mặc định chạy trên 5 video đại diện để verify pipeline:
   - fall-01-cam0, fall-01-cam1, fall-10-cam0 (fall samples)
@@ -203,11 +203,11 @@ def main():
     print(f"  Output dir   : {output_dir}")
     print()
 
-    # Load model YOLOv8-Pose
+    # Load model YOLO11-Pose
     pose_cfg = config.get("pose_estimation", {})
-    print(f"[1/3] Đang load model {pose_cfg.get('model', 'yolov8n-pose.pt')}...")
+    print(f"[1/3] Đang load model {pose_cfg.get('model', 'yolo11s-pose.pt')}...")
     extractor = KeypointExtractor(
-        model_name=pose_cfg.get("model", "yolov8n-pose.pt"),
+        model_name=pose_cfg.get("model", "yolo11s-pose.pt"),
         conf_threshold=pose_cfg.get("confidence_threshold", 0.5),
         device=device,
     )

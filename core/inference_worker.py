@@ -20,7 +20,7 @@ class FallDetectorWorker:
     def __init__(
         self,
         model_path: str = os.path.join("train_hung", "runs", "fall_detection", "best.pt"),
-        yolo_model: str = "yolo11n-pose.pt", # Dùng bản Nano để chạy mượt hơn trên CPU
+        yolo_model: str = "yolo11s-pose.pt", # Chuyển sang bản Small (s) để nhận diện người nằm tốt hơn bản Nano
         sequence_length: int = 72,
         fps: float = 24.0,
         device: str = "auto",
@@ -80,10 +80,51 @@ class FallDetectorWorker:
             "alarm_until": 0.0,
             "last_reason": "OK",
         })
-        self.rule_lie_frames = 6
-        self.rule_suspect_frames = 4
+        self.rule_lie_frames = 3              # Giảm từ 6 → 3: phản ứng nhanh hơn khi nằm
+        self.rule_suspect_frames = 2           # Giảm từ 4 → 2: chỉ cần 2 frame nghi ngờ liên tục
         self.rule_alarm_hold = 2.0
         self.rule_model_soft_threshold = 0.25
+
+        # Cấu hình lọc người thật (chống detect nhầm ghế, vật thể)
+        self.min_visible_keypoints = 3         # Giảm từ 5 → 3: người nằm thường bị che nhiều keypoint
+        self.min_kp_conf_for_visible = 0.3     # Ngưỡng conf để tính keypoint là "thấy được"
+        self.min_box_conf = 0.25               # Ngưỡng YOLO detection confidence tối thiểu
+        # Keypoint indices: 5,6=shoulders, 11,12=hips — cần ít nhất 1 vai HOẶC 1 hông
+        self.core_upper_body_indices = [5, 6]   # Vai trái, vai phải
+        self.core_lower_body_indices = [11, 12]  # Hông trái, hông phải
+
+    def _is_valid_person(self, kp: np.ndarray, box_conf: float) -> bool:
+        """
+        Kiểm tra detection có phải là người thật hay không.
+        Lọc 3 tầng:
+          1. YOLO box confidence >= min_box_conf
+          2. Số keypoint visible >= min_visible_keypoints
+          3. Có ít nhất 1 vai HOẶC 1 hông visible (cấu trúc skeleton người)
+        """
+        # Tầng 1: YOLO detection confidence
+        if box_conf < self.min_box_conf:
+            return False
+
+        # Tầng 2: Đếm keypoint visible
+        visible_count = int(np.sum(kp[:, 2] > self.min_kp_conf_for_visible))
+        if visible_count < self.min_visible_keypoints:
+            return False
+
+        # Tầng 3: Kiểm tra cấu trúc skeleton — phải có ít nhất 1 vai hoặc 1 hông
+        has_shoulder = any(
+            kp[idx, 2] > self.min_kp_conf_for_visible
+            for idx in self.core_upper_body_indices
+            if idx < len(kp)
+        )
+        has_hip = any(
+            kp[idx, 2] > self.min_kp_conf_for_visible
+            for idx in self.core_lower_body_indices
+            if idx < len(kp)
+        )
+        if not has_shoulder and not has_hip:
+            return False
+
+        return True
 
     def fit_sequence(self, keypoints: np.ndarray, timestamps: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
@@ -170,7 +211,7 @@ class FallDetectorWorker:
         if kpts is not None:
             lower_body_kpts = sum(1 for i in range(11, 17) if i < len(kpts) and kpts[i][2] > 0.3)
 
-        lying_by_box = aspect >= 1.25
+        lying_by_box = aspect >= 1.1  # Giảm từ 1.25 → 1.1: bắt cả tư thế co mình khi ngã
         touching_bottom = y2 >= H * 0.95
         
         # Nếu không thấy phần dưới cơ thể và box bị cắt dưới (ngồi gần webcam),
@@ -194,7 +235,7 @@ class FallDetectorWorker:
         state["max_h"] = max_h
             
         collapsed = False
-        if max_h > 50 and bh < max_h * 0.5 and lower_body_area:
+        if max_h > 50 and bh < max_h * 0.6 and lower_body_area:  # 0.5 → 0.6: nhạy hơn khi chiều cao giảm
             collapsed = True
             
         sudden_motion = False
@@ -204,11 +245,18 @@ class FallDetectorWorker:
             speed = dist / dt
             sudden_motion = speed >= H * 0.80
 
+        # Tính tỉ lệ chiều cao hiện tại so với max → nếu giảm mạnh = ngã
+        height_ratio_drop = False
+        if max_h > 50:
+            ratio = bh / max_h
+            height_ratio_drop = ratio < 0.55  # Chiều cao giảm > 45% so với cao nhất
+
         model_suspicious = model_prob >= self.rule_model_soft_threshold
         score = 0
         if lying_by_box: score += 2
         if torso_horizontal: score += 2
         if collapsed: score += 2
+        if height_ratio_drop: score += 1  # Tín hiệu phụ: chiều cao giảm đột ngột
         if lower_body_area: score += 1
         if sudden_motion: score += 1
         if model_suspicious: score += 1
@@ -264,7 +312,17 @@ class FallDetectorWorker:
                 state.get("suspect_count", 0) >= self.rule_suspect_frames
                 or state.get("lying_count", 0) >= self.rule_lie_frames
             )
-            if 0.2 <= time_lost <= 1.5 and recently_suspicious:
+            # Người đang đứng (box cao) đột ngột biến mất → rất có thể đã ngã
+            was_standing = False
+            last_bbox = state.get("last_bbox")
+            if last_bbox is not None:
+                _, _, bx2, by2 = map(float, last_bbox)
+                bx1, by1 = float(last_bbox[0]), float(last_bbox[1])
+                last_bh = by2 - by1
+                last_bw = bx2 - bx1
+                was_standing = last_bh > last_bw * 1.2 and last_bh > 80  # Box cao hơn rộng = đang đứng
+
+            if 0.2 <= time_lost <= 2.0 and (recently_suspicious or was_standing):
                 lost_falls[track_id] = "LOST_AFTER_SUSPECTED_FALL"
                 state["alarm_until"] = current_time + self.rule_alarm_hold
         return lost_falls
@@ -276,26 +334,27 @@ class FallDetectorWorker:
             - frame: annotated frame
             - fall_probs: Dictionary mapping track_id to fall_probability
         """
-        # Run YOLO tracking with conf=0.25 (lower to catch lying poses), but rely on kp quality filter for false positives
-        # Run YOLO tracking with conf=0.15 and use ByteTrack which is much better at keeping IDs during fast motion
+        # YOLO tracking: dùng conf thấp để YOLO không bỏ sót người nằm,
+        # nhưng sau đó lọc bằng _is_valid_person() (3 tầng) để loại ghế/vật thể
         results = self.yolo.track(
             frame, 
             persist=True, 
             verbose=False, 
             classes=[0], 
-            conf=0.05, 
+            conf=0.10,  # Giữ conf thấp cho YOLO để không miss người nằm
             iou=0.45,
             imgsz=960,
-            tracker="bytetrack.yaml"
+            tracker="bytetrack.yaml"  # ByteTrack không dùng GMC nên tránh crash optical flow khi frame size thay đổi
         )
         
         fall_probs = {}
-        self.valid_track_ids = set() # Store valid IDs for this frame
+        self.valid_track_ids = set()
         
         if len(results) > 0 and results[0].boxes is not None and results[0].boxes.id is not None:
             result = results[0]
             boxes = result.boxes.xyxy.cpu().numpy()
             track_ids = result.boxes.id.int().cpu().numpy()
+            box_confs = result.boxes.conf.cpu().numpy()  # Lấy confidence của từng box
             
             if result.keypoints is not None:
                 keypoints_all = result.keypoints.data.cpu().numpy()
@@ -305,10 +364,16 @@ class FallDetectorWorker:
                     x1, y1, x2, y2 = map(int, boxes[i])
                     
                     w, h = x2 - x1, y2 - y1
-                    if w < 50 or h < 50:
+                    if w < 30 or h < 30:  # 50→30: bắt người nằm xa camera có box nhỏ
                         continue
                         
                     kp = keypoints_all[i]
+                    box_conf = float(box_confs[i])
+                    
+                    # === LỌC 3 TẦNG: Chỉ chấp nhận detection là người thật ===
+                    if not self._is_valid_person(kp, box_conf):
+                        continue
+                    
                     avg_kp_conf = np.mean(kp[:, 2])
                     kp_reliable = avg_kp_conf >= 0.20
                         
@@ -317,17 +382,31 @@ class FallDetectorWorker:
                     
                     if track_id not in self.person_history:
                         # --- CƠ CHẾ KẾ THỪA ID (ID INHERITANCE) ---
-                        # Nếu YOLO bị mất dấu và cấp ID mới, ta sẽ tìm ID vừa biến mất gần nhất (< 1.5s) để kế thừa lịch sử
+                        # Nếu YOLO bị mất dấu và cấp ID mới, tìm ID vừa biến mất gần nhất (<1.5s) để kế thừa lịch sử
                         inherited = False
                         consumed_tid = None
                         for old_tid, old_last_seen in list(self.person_last_seen.items()):
                             if old_tid != track_id and timestamp - old_last_seen < 1.5:
-                                # Kế thừa buffer của người cũ (copy để không bị tham chiếu chéo)
+                                # Kế thừa buffer keypoints
                                 old_buf = self.person_history.get(old_tid, collections.deque(maxlen=self.sequence_length))
                                 self.person_history[track_id] = collections.deque(old_buf, maxlen=self.sequence_length)
                                 
                                 if old_tid in self.last_probs:
                                     self.last_probs[track_id] = self.last_probs[old_tid]
+
+                                # Kế thừa rule_states (lying_count, suspect_count, alarm_until, max_h)
+                                # → ID mới KHÔNG phải tích lũy lại từ 0
+                                if old_tid in self.rule_states:
+                                    old_rule = self.rule_states[old_tid]
+                                    self.rule_states[track_id].update({
+                                        "suspect_count": old_rule.get("suspect_count", 0),
+                                        "lying_count": old_rule.get("lying_count", 0),
+                                        "max_h": old_rule.get("max_h", 0),
+                                        "alarm_until": old_rule.get("alarm_until", 0.0),
+                                        "last_reason": old_rule.get("last_reason", "OK"),
+                                    })
+                                if old_tid in self.fall_state:
+                                    self.fall_state[track_id] = self.fall_state[old_tid]
                                     
                                 inherited = True
                                 consumed_tid = old_tid

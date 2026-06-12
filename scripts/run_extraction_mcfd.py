@@ -236,9 +236,9 @@ def main():
 
     # Load model
     pose_cfg = config.get("pose_estimation", {})
-    print(f"[2/3] Dang load model {pose_cfg.get('model', 'yolov8n-pose.pt')}...")
+    print(f"[2/3] Dang load model {pose_cfg.get('model', 'yolo11s-pose.pt')}...")
     extractor = KeypointExtractor(
-        model_name=pose_cfg.get("model", "yolov8n-pose.pt"),
+        model_name=pose_cfg.get("model", "yolo11s-pose.pt"),
         conf_threshold=pose_cfg.get("confidence_threshold", 0.5),
         device=device,
     )
