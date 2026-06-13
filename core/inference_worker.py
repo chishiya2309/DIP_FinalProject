@@ -19,7 +19,7 @@ from .model import build_model
 class FallDetectorWorker:
     def __init__(
         self,
-        model_path: str = os.path.join("train_hung", "runs", "fall_detection", "best.pt"),
+        model_path: str = "best.pt",
         yolo_model: str = "yolo11s-pose.pt", # Chuyển sang bản Small (s) để nhận diện người nằm tốt hơn bản Nano
         sequence_length: int = 72,
         fps: float = 24.0,
