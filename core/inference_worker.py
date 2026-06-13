@@ -21,7 +21,7 @@ class FallDetectorWorker:
         self,
         model_path: str = "best.pt",
         yolo_model: str = "yolo11s-pose.pt", # Chuyển sang bản Small (s) để nhận diện người nằm tốt hơn bản Nano
-        sequence_length: int = 72,
+        sequence_length: int = 30,
         fps: float = 24.0,
         device: str = "auto",
         conf_threshold: float = 0.5,
@@ -211,7 +211,18 @@ class FallDetectorWorker:
         if kpts is not None:
             lower_body_kpts = sum(1 for i in range(11, 17) if i < len(kpts) and kpts[i][2] > 0.3)
 
-        lying_by_box = aspect >= 1.1  # Giảm từ 1.25 → 1.1: bắt cả tư thế co mình khi ngã
+        # Đầu (Head) và Hông (Hip) để xác định tư thế chúc đầu xuống đất
+        head = self._mean_visible(kpts, [0, 1, 2, 3, 4]) # Mũi, mắt, tai
+        if head is None:
+            head = shoulder # Fallback về vai nếu không thấy mặt
+            
+        head_below_hip = False
+        if head is not None and hip is not None:
+            # Trục Y hướng xuống dưới. Nên head[1] > hip[1] nghĩa là Đầu thấp hơn Hông
+            # Trừ hao 20 pixel để tránh nhiễu
+            head_below_hip = head[1] > (hip[1] - 20)
+
+        lying_by_box = aspect >= 1.35  # Tăng từ 1.1 -> 1.35: Cúi nhặt đồ box có thể rộng ra, nhưng nằm hẳn thì phải rộng hẳn
         touching_bottom = y2 >= H * 0.95
         
         # Nếu không thấy phần dưới cơ thể và box bị cắt dưới (ngồi gần webcam),
@@ -235,7 +246,7 @@ class FallDetectorWorker:
         state["max_h"] = max_h
             
         collapsed = False
-        if max_h > 50 and bh < max_h * 0.6 and lower_body_area:  # 0.5 → 0.6: nhạy hơn khi chiều cao giảm
+        if max_h > 50 and bh < max_h * 0.55 and lower_body_area:  # Thắt chặt lại 0.55
             collapsed = True
             
         sudden_motion = False
@@ -243,31 +254,40 @@ class FallDetectorWorker:
             dt = max(1e-3, current_time - state["last_time"])
             dist = float(np.linalg.norm(center - state["last_center"]))
             speed = dist / dt
-            sudden_motion = speed >= H * 0.80
+            # Giảm ngưỡng tốc độ xuống 0.7 để bắt nhạy hơn sự rơi nhanh
+            sudden_motion = speed >= H * 0.70
 
         # Tính tỉ lệ chiều cao hiện tại so với max → nếu giảm mạnh = ngã
         height_ratio_drop = False
         if max_h > 50:
             ratio = bh / max_h
-            height_ratio_drop = ratio < 0.55  # Chiều cao giảm > 45% so với cao nhất
+            height_ratio_drop = ratio < 0.50  # Phải giảm thật mạnh (còn <50%) mới đáng ngờ
 
         model_suspicious = model_prob >= self.rule_model_soft_threshold
+        
+        # --- CƠ CHẾ ĐIỂM (VOTING MECHANISM) ---
         score = 0
         if lying_by_box: score += 2
-        if torso_horizontal: score += 2
-        if collapsed: score += 2
-        if height_ratio_drop: score += 1  # Tín hiệu phụ: chiều cao giảm đột ngột
+        if torso_horizontal: score += 1 # Cúi nhặt đồ cũng làm thân ngang -> chỉ +1
+        if head_below_hip: score += 2   # Cúi nhặt đồ ít khi đầu thấp hơn hông rõ rệt -> +2
+        if collapsed: score += 1
+        if height_ratio_drop: score += 1 
+        if sudden_motion: score += 2    # Ngã thì nhanh, cúi thì chậm -> +2
         if lower_body_area: score += 1
-        if sudden_motion: score += 1
-        if model_suspicious: score += 1
+        if model_suspicious: score += 2 # Trust the model
 
-        suspicious = score >= 3
+        # Nâng mức điểm khả nghi lên 4.5 (phải thỏa mãn nhiều yếu tố hoặc yếu tố mạnh)
+        suspicious = score >= 4.5
         if suspicious:
             state["suspect_count"] += 1
         else:
             state["suspect_count"] = max(0, state["suspect_count"] - 1)
 
-        if lying_by_box or torso_horizontal or collapsed:
+        # Định nghĩa dáng nằm rõ ràng (ưu tiên chiều rộng > chiều cao)
+        # Chỉ khi ngã thật thì Box mới rộng ngang. Quỳ gối cúi nhặt đồ thì Box vẫn dọc (aspect < 1.0)
+        is_lying_shape = lying_by_box or (torso_horizontal and aspect >= 1.1)
+
+        if is_lying_shape:
             state["lying_count"] += 1
         else:
             state["lying_count"] = max(0, state["lying_count"] - 1)
@@ -278,9 +298,21 @@ class FallDetectorWorker:
         if state["lying_count"] >= self.rule_lie_frames and suspicious:
             is_fall_by_rule = True
             reason = "LYING_POSTURE"
-        if state["suspect_count"] >= self.rule_suspect_frames and (lying_by_box or torso_horizontal):
-            is_fall_by_rule = True
-            reason = "RULE_FALL"
+            
+        if state["suspect_count"] >= self.rule_suspect_frames:
+            # Đã bị đánh dấu khả nghi liên tục, giờ phải lọc:
+            # 1. Có dáng nằm rõ ràng (Rộng > Cao)
+            if is_lying_shape:
+                is_fall_by_rule = True
+                reason = "RULE_FALL"
+            # 2. Rơi ngã úp mặt về phía Camera (Box không rộng nhưng sập rất nhanh)
+            elif sudden_motion and collapsed:
+                is_fall_by_rule = True
+                reason = "SUDDEN_COLLAPSE"
+            # 3. Model AI có độ tin cậy tương đối cao xác nhận
+            elif model_prob >= self.rule_model_soft_threshold + 0.15: # Ví dụ >= 0.40
+                is_fall_by_rule = True
+                reason = "SUSPICIOUS_POSTURE"
         if model_prob >= self.conf_threshold:
             is_fall_by_rule = True
             reason = "MODEL_FALL"
