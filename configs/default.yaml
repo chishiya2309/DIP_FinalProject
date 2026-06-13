@@ -13,28 +13,22 @@ paths:
 # --- Preprocessing (DIP) ---
 preprocessing:
   gaussian_blur:
-    kernel_size: 5        # Kích thước kernel Gaussian
-    sigma: 1.0            # Độ lệch chuẩn
+    kernel_size: 5 # Kích thước kernel Gaussian
+    sigma: 1.0 # Độ lệch chuẩn
   clahe:
-    clip_limit: 2.0       # Giới hạn tương phản CLAHE
+    clip_limit: 2.0 # Giới hạn tương phản CLAHE
     tile_grid_size: [8, 8] # Kích thước lưới
 
 # --- YOLO11-Pose ---
 pose_estimation:
-  model: "yolo11s-pose.pt"  # Đồng bộ với inference_worker (Small model)
+  model: "yolo11s-pose.pt" # Đồng bộ với inference_worker (Small model)
   confidence_threshold: 0.5
-  num_keypoints: 17          # COCO keypoints
+  num_keypoints: 17 # COCO keypoints
 
 # --- Sliding Window ---
 sliding_window:
-  window_size: 30    # T frames per clip
-  stride: 10         # Bước trượt S
-
-# --- PoseC3D ---
-posec3d:
-  heatmap_size: [56, 56]   # H x W của pseudo-heatmap
-  num_classes: 2            # FALL, NON-FALL
-  pretrained_weights: null  # Đường dẫn tới pre-trained weights
+  window_size: 30 # T frames per clip
+  stride: 10 # Bước trượt S
 
 # --- Training ---
 training:
@@ -48,13 +42,13 @@ training:
 
 # --- Alerting ---
 alerting:
-  fall_threshold: 0.7      # Ngưỡng Softmax để kích hoạt cảnh báo
+  fall_threshold: 0.7 # Ngưỡng Softmax để kích hoạt cảnh báo
   alert_sound: "assets/alert.wav"
-  bbox_color: [0, 0, 255]  # Đỏ (BGR)
+  bbox_color: [0, 0, 255] # Đỏ (BGR)
   bbox_thickness: 3
 
 # --- System ---
 system:
   target_fps: 25
-  device: "cuda"           # cuda hoặc cpu
+  device: "cuda" # cuda hoặc cpu
   seed: 42
