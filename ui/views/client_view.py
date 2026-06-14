@@ -56,8 +56,9 @@ class ClientView(ctk.CTkFrame):
             threading.Thread(target=lambda: winsound.Beep(1000, 500), daemon=True).start()
             
             source_str = str(self.controller.camera_manager.source)
+            frame = self.controller.inference_manager.get_annotated_frame()
             for tid in new_falls:
-                fall_logger.log_fall(source_str, tid)
+                fall_logger.log_fall(source_str, tid, frame_image=frame)
             
         if has_fall:
             self.lbl_status.configure(text=f"⚠ PHÁT HIỆN TÉ NGÃ ⚠", text_color="red")

@@ -41,6 +41,6 @@ class LoginView(ctk.CTkFrame):
         if password == "admin123":
             self.entry_password.delete(0, 'end')
             self.lbl_error.configure(text="")
-            self.controller.show_view("admin")
+            self.controller.show_view("admin_monitor")
         else:
             self.lbl_error.configure(text="Mật khẩu không đúng!")

@@ -58,18 +58,27 @@ class InferenceManager:
                 # Update trạng thái
                 falling_ids = []
                 new_falling_ids = []
+                active_tids = self.worker.valid_track_ids if hasattr(self.worker, 'valid_track_ids') else []
+                
                 # FallDetectorWorker tự cập nhật self.worker.fall_state
                 for tid, is_fall in self.worker.fall_state.items():
                     if is_fall:
                         falling_ids.append(tid)
-                        if tid not in self.cooldowns or current_time - self.cooldowns[tid] > self.cooldown_time:
+                        if tid not in self.cooldowns:
+                            # Lần đầu tiên thấy ngã -> Gửi cảnh báo
                             self.cooldowns[tid] = current_time
                             new_falling_ids.append(tid)
+                        else:
+                            # Đang nằm -> Cập nhật thời gian cuối cùng thấy nằm (debounce)
+                            self.cooldowns[tid] = current_time
+                    else:
+                        # Hết ngã (Đứng lên). Xóa khỏi cooldown nếu đã đứng lên đủ lâu (debounce)
+                        if tid in self.cooldowns and current_time - self.cooldowns[tid] > self.cooldown_time:
+                            del self.cooldowns[tid]
                             
-                # Cleanup cooldowns cho các track_id không còn tồn tại
-                active_tids = self.worker.valid_track_ids if hasattr(self.worker, 'valid_track_ids') else []
+                # Cleanup cooldowns cho các track_id không còn tồn tại trên màn hình
                 for tid in list(self.cooldowns.keys()):
-                    if tid not in active_tids and current_time - self.cooldowns[tid] > self.cooldown_time * 2:
+                    if tid not in active_tids and current_time - self.cooldowns.get(tid, current_time) > self.cooldown_time * 2:
                         del self.cooldowns[tid]
                         
                 # Chuyển lại sang RGB để UI (CustomTkinter/Pillow) hiển thị
