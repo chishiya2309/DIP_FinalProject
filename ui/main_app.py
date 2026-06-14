@@ -1,7 +1,9 @@
 import customtkinter as ctk
 from ui.views.login_view import LoginView
 from ui.views.admin_view import AdminView
+from ui.views.admin_settings_view import AdminSettingsView
 from ui.views.client_view import ClientView
+from ui.views.history_view import HistoryView
 from ui.components.sidebar import Sidebar
 from core.camera_manager import CameraManager
 from core.inference_manager import InferenceManager
@@ -32,6 +34,7 @@ class MainApp(ctk.CTk):
         self.inference_manager = InferenceManager(self.camera_manager)
         
         self.views = {}
+        self.current_role = None
         
         self.setup_views()
         self.show_view("login")
@@ -46,8 +49,10 @@ class MainApp(ctk.CTk):
     def setup_views(self):
         # Khởi tạo các view
         self.views["login"] = LoginView(self.view_container, controller=self)
-        self.views["admin"] = AdminView(self.view_container, controller=self)
+        self.views["admin_monitor"] = AdminView(self.view_container, controller=self)
+        self.views["admin_settings"] = AdminSettingsView(self.view_container, controller=self)
         self.views["client"] = ClientView(self.view_container, controller=self)
+        self.views["history"] = HistoryView(self.view_container, controller=self)
         
         for view in self.views.values():
             view.grid(row=0, column=0, sticky="nsew")
@@ -68,11 +73,19 @@ class MainApp(ctk.CTk):
         
         # Cập nhật sidebar tuỳ theo chế độ
         if view_name == "login":
+            self.current_role = None
             self.sidebar.hide_navigation()
-        elif view_name == "admin":
+        elif view_name.startswith("admin"):
+            self.current_role = "admin"
             self.sidebar.show_admin_navigation()
         elif view_name == "client":
+            self.current_role = "client"
             self.sidebar.show_client_navigation()
+            
+        # Nếu vào lịch sử thì load data lại
+        if view_name == "history":
+            if hasattr(view, 'load_data'):
+                view.load_data()
 
     def logout(self):
         self.show_view("login")

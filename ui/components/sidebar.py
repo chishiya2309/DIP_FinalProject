@@ -35,9 +35,9 @@ class Sidebar(ctk.CTkFrame):
             lbl.grid(row=4+i, column=0, padx=20, pady=2, sticky="w")
             
         # Navigation Buttons (Sẽ được ẩn/hiện tuỳ chế độ)
-        self.btn_monitor = ctk.CTkButton(self, text="Giám sát Camera", command=self.dummy_cmd)
-        self.btn_settings = ctk.CTkButton(self, text="Cài đặt Hệ thống", command=self.dummy_cmd)
-        self.btn_history = ctk.CTkButton(self, text="Lịch sử Cảnh báo", command=self.dummy_cmd)
+        self.btn_monitor = ctk.CTkButton(self, text="Giám sát Camera", command=lambda: master.show_view("admin_monitor" if master.current_role == "admin" else "client"))
+        self.btn_settings = ctk.CTkButton(self, text="Cài đặt Hệ thống", command=lambda: master.show_view("admin_settings"))
+        self.btn_history = ctk.CTkButton(self, text="Lịch sử Cảnh báo", command=lambda: master.show_view("history"))
         
         # Logout button
         self.btn_logout = ctk.CTkButton(self, text="Đăng xuất", fg_color="transparent", 

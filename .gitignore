@@ -57,3 +57,5 @@ train_hung/archive
 *.pth
 *.weights
 *.mp4
+
+logs/
