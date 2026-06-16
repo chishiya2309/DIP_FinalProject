@@ -37,6 +37,7 @@ Hệ thống được thiết kế theo mô hình pipeline đa luồng (Multi-th
 ### 3.2.1. Thiết kế module CameraManager
 
 Class `CameraManager` đóng vai trò lớp trừu tượng (Abstraction Layer) cho mọi nguồn video đầu vào. Nhờ thiết kế này, hệ thống có thể chuyển đổi linh hoạt giữa:
+
 - **Webcam:** Tham số `source=0` (mặc định)
 - **File video:** Tham số `source="path/to/video.mp4"` — tự động loop khi hết video
 - **Camera IP:** Tham số `source="http://192.168.1.x:8080/video"` — hỗ trợ HTTP stream và RTSP
@@ -66,15 +67,15 @@ Thay vì áp dụng bộ lọc cố định, hệ thống triển khai một pip
 
 Class `FallDetectorWorker` tích hợp mô hình `yolo11s-pose.pt` với cấu hình inference được tối ưu:
 
-| Tham số | Giá trị | Lý do |
-|---------|---------|-------|
-| `conf` | 0.10 | Ngưỡng rất thấp để không bỏ sót người ở tư thế nằm (box nhỏ, mờ) |
-| `iou` | 0.45 | Ngưỡng NMS chuẩn cho single-class detection |
-| `imgsz` | 960 | Độ phân giải cao hơn mặc định (640) để tăng độ chính xác keypoints |
-| `classes` | [0] | Chỉ phát hiện class "person" |
-| `tracker` | bytetrack.yaml | ByteTrack — không dùng GMC optical flow, tránh crash khi frame size thay đổi |
+| Tham số   | Giá trị          | Lý do                                                                                                               |
+| --------- | ---------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `conf`    | 0.45             | Ngưỡng được đẩy lên cao vừa đủ để lọc nhiễu, tránh nhận diện nhầm các vật thể tĩnh như bàn, ghế thành người.        |
+| `iou`     | 0.45             | Ngưỡng NMS chuẩn giúp triệt tiêu các bounding box bị trùng lặp.                                                     |
+| `imgsz`   | 960              | Kích thước ảnh đầu vào lớn hơn mặc định (640) giúp phát hiện keypoints chính xác hơn, đặc biệt với người ở xa.      |
+| `classes` | [0]              | Chỉ phát hiện class "person".                                                                                       |
+| `tracker` | `bytetrack.yaml` | Sử dụng thuật toán ByteTrack thay thế BoT-SORT để vô hiệu hóa lỗi Optical Flow (GMC) khi kích thước frame thay đổi. |
 
-### 3.3.2. Bộ lọc 3 tầng xác minh người thật (_is_valid_person)
+### 3.3.2. Bộ lọc 3 tầng xác minh người thật (\_is_valid_person)
 
 Do YOLO với `conf=0.10` sẽ phát hiện được nhiều box — bao gồm cả ghế, vật dụng bị nhầm lẫn — hệ thống triển khai bộ lọc 3 tầng:
 
@@ -97,16 +98,16 @@ Mỗi khi thu thập đủ chuỗi 30 frame tư thế cho một Track ID, chuỗ
 
 Song song với mô hình AI, hệ thống tính toán **8 chỉ số hình học và động học** từ dữ liệu YOLO-Pose tại mỗi frame:
 
-| Chỉ số | Mô tả | Điểm |
-|--------|-------|------|
-| `lying_by_box` | Tỷ lệ chiều rộng/chiều cao bounding box ≥ 1.35 | +2 |
-| `torso_horizontal` | Góc giữa vai và hông so với phương ngang ≤ 35° | +1 |
-| `head_below_hip` | Đầu nằm thấp hơn hông (trục Y hướng xuống) | +2 |
-| `collapsed` | Chiều cao box hiện tại < 55% chiều cao cực đại đã ghi nhận | +1 |
-| `height_ratio_drop` | Chiều cao box giảm xuống dưới 50% so với max | +1 |
-| `sudden_motion` | Tốc độ di chuyển trọng tâm ≥ 70% chiều cao frame/giây | +2 |
-| `lower_body_area` | Đối tượng nằm ở nửa dưới khung hình | +1 |
-| `model_suspicious` | PoseBiGRU cho $P(\text{Fall}) \geq 0.25$ | +2 |
+| Chỉ số              | Mô tả                                                      | Điểm |
+| ------------------- | ---------------------------------------------------------- | ---- |
+| `lying_by_box`      | Tỷ lệ chiều rộng/chiều cao bounding box ≥ 1.35             | +2   |
+| `torso_horizontal`  | Góc giữa vai và hông so với phương ngang ≤ 35°             | +1   |
+| `head_below_hip`    | Đầu nằm thấp hơn hông (trục Y hướng xuống)                 | +2   |
+| `collapsed`         | Chiều cao box hiện tại < 55% chiều cao cực đại đã ghi nhận | +1   |
+| `height_ratio_drop` | Chiều cao box giảm xuống dưới 50% so với max               | +1   |
+| `sudden_motion`     | Tốc độ di chuyển trọng tâm ≥ 70% chiều cao frame/giây      | +2   |
+| `lower_body_area`   | Đối tượng nằm ở nửa dưới khung hình                        | +1   |
+| `model_suspicious`  | PoseBiGRU cho $P(\text{Fall}) \geq 0.25$                   | +2   |
 
 **Cơ chế biểu quyết (Voting):** Tổng điểm ≥ 4.5 → trạng thái "khả nghi" (`suspicious`). Khi "khả nghi" liên tục ≥ 2 frame VÀ thỏa thêm một trong ba điều kiện: (1) có dáng nằm rõ ràng, (2) sập đổ đột ngột, hoặc (3) Model AI tin cậy cao — hệ thống kích hoạt cảnh báo.
 
