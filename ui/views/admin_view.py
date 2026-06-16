@@ -13,7 +13,7 @@ class AdminView(ctk.CTkFrame):
         # Top bar
         self.topbar = ctk.CTkFrame(self, height=50)
         self.topbar.grid(row=0, column=0, sticky="ew", pady=(0, 10))
-        self.lbl_role = ctk.CTkLabel(self.topbar, text="Role: ADMIN | FPS: -- | Pipeline: YOLOv8-Pose + PoseC3D", font=ctk.CTkFont(weight="bold"))
+        self.lbl_role = ctk.CTkLabel(self.topbar, text="Role: ADMIN | FPS: -- | Pipeline: YOLO11-Pose + PoseBiGRU", font=ctk.CTkFont(weight="bold"))
         self.lbl_role.pack(side="left", padx=20, pady=10)
         
         # Video Area
