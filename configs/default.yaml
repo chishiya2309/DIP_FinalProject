@@ -42,7 +42,7 @@ training:
 
 # --- Alerting ---
 alerting:
-  fall_threshold: 0.7 # Ngưỡng Softmax để kích hoạt cảnh báo
+  fall_threshold: 0.73 # Ngưỡng Softmax để kích hoạt cảnh báo (Tối ưu từ kết quả Validation)
   alert_sound: "assets/alert.wav"
   bbox_color: [0, 0, 255] # Đỏ (BGR)
   bbox_thickness: 3

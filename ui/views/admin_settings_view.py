@@ -39,10 +39,10 @@ class AdminSettingsView(ctk.CTkFrame):
         self.entry_ip_cam = ctk.CTkEntry(self.settings_frame, placeholder_text="rtsp://192.168.1.100:554/stream", width=300)
         
         # Fall confidence threshold
-        self.lbl_thresh = ctk.CTkLabel(self.settings_frame, text="Ngưỡng cảnh báo (Confidence): 0.50", font=ctk.CTkFont(weight="bold"))
+        self.lbl_thresh = ctk.CTkLabel(self.settings_frame, text="Ngưỡng cảnh báo (Confidence): 0.80", font=ctk.CTkFont(weight="bold"))
         self.lbl_thresh.pack(anchor="w", padx=40)
         self.sld_thresh = ctk.CTkSlider(self.settings_frame, from_=0.0, to=1.0, command=self.update_thresh_label)
-        self.sld_thresh.set(0.50)
+        self.sld_thresh.set(0.80)
         self.sld_thresh.pack(fill="x", padx=40, pady=(0, 20))
         
         # Cooldown

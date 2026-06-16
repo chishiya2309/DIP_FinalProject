@@ -8,6 +8,12 @@
 numpy
 scipy
 pyyaml                    # Đọc config YAML
+requests                  # Gọi API Telegram
+
+# --- UI & Image ---
+customtkinter             # Giao diện người dùng hiện đại
+Pillow                    # Xử lý ảnh cho UI
+
 
 # --- Image Processing (DIP) ---
 opencv-python
