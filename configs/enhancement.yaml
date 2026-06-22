@@ -1,0 +1,36 @@
+enhancement:
+  auto_detect: true
+  backlight:
+    auto_detect_threshold: 0.3
+    enabled: true
+    gamma: 1.15
+    method: gamma
+    retinex_sigma: 30.0
+  clahe:
+    clip_limit: 1.5
+    contrast_threshold: 0.25
+    tile_grid_size:
+    - 16
+    - 16
+  denoising:
+    bilateral_d: 5
+    enabled: true
+    median_kernel: 3
+    method: bilateral
+    nlmeans_h: 10
+    noise_threshold: 500.0
+    sigma_color: 75
+    sigma_space: 75
+  sharpening:
+    blur_kernel: 5
+    enabled: true
+    method: unsharp_mask
+    sharpness_threshold: 150.0
+    sigma: 1.0
+    strength: 1.2
+  white_balance:
+    cast_threshold: 30.0
+    enabled: true
+    max_gain: 1.15
+    method: white_patch
+    min_gain: 0.9

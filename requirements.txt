@@ -1,0 +1,41 @@
+# ============================================
+# Fall Detection System - Dependencies
+# ============================================
+# Install: pip install -r requirements.txt
+# ============================================
+
+# --- Core ---
+numpy
+scipy
+pyyaml                    # Đọc config YAML
+requests                  # Gọi API Telegram
+
+# --- UI & Image ---
+customtkinter             # Giao diện người dùng hiện đại
+Pillow                    # Xử lý ảnh cho UI
+
+
+# --- Image Processing (DIP) ---
+opencv-python
+opencv-contrib-python
+
+# --- Pose Estimation ---
+ultralytics               # YOLOv8-Pose
+
+# --- Deep Learning Framework ---
+torch
+torchvision
+torchaudio
+
+# --- Data & Evaluation ---
+scikit-learn
+pandas
+matplotlib
+seaborn
+
+# --- Notebook & Development ---
+jupyter
+tqdm
+
+# --- Video/Audio Alerting ---
+playsound
