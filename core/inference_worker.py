@@ -116,7 +116,7 @@ class FallDetectorWorker:
         # Cấu hình lọc người thật (chống detect nhầm ghế, vật thể)
         self.min_visible_keypoints = 3         # Giảm từ 5 → 3: người nằm thường bị che nhiều keypoint
         self.min_kp_conf_for_visible = 0.3     # Ngưỡng conf để tính keypoint là "thấy được"
-        self.min_box_conf = 0.25               # Ngưỡng YOLO detection confidence tối thiểu
+        self.min_box_conf = 0.50               # Tăng ngưỡng YOLO detection confidence tối thiểu để lọc ghế/vật thể
         # Keypoint indices: 5,6=shoulders, 11,12=hips — cần ít nhất 1 vai HOẶC 1 hông
         self.core_upper_body_indices = [5, 6]   # Vai trái, vai phải
         self.core_lower_body_indices = [11, 12]  # Hông trái, hông phải
@@ -501,7 +501,7 @@ class FallDetectorWorker:
             persist=True, 
             verbose=False, 
             classes=[0], 
-            conf=0.10,  # Giữ conf thấp cho YOLO để không miss người nằm
+            conf=0.45,  # Tăng conf để tránh detect nhầm ghế, vật thể
             iou=0.45,
             imgsz=640,  # Task 2: giảm từ 960 → 640 → ~2x FPS trên CPU
             tracker="bytetrack.yaml"  # ByteTrack không dùng GMC nên tránh crash optical flow khi frame size thay đổi

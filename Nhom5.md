@@ -13,18 +13,18 @@ Description automatically generated](media/image1.png){width="1.5666666666666667
 
 **CHO NGƯỜI CAO TUỔI**
 
-**GVHD: *PGS.TS. Hoàng Văn Dũng***
+**GVHD: _PGS.TS. Hoàng Văn Dũng_**
 
-**Mã LHP: *DIPR430685_06CLC***
+**Mã LHP: _DIPR430685_06CLC_**
 
-**Học kỳ:** *II*
+**Học kỳ:** _II_
 
-**Năm học: *2025 -- 2026***
+**Năm học: _2025 -- 2026_**
 
 **Danh sách sinh viên thực hiện: Nhóm 05**
 
 | **MSSV** | **Họ tên**              |
-|----------|-------------------------|
+| -------- | ----------------------- |
 | 23110078 | Nguyễn Thái Bảo         |
 | 23110110 | Lê Quang Hưng           |
 | 23110111 | Lương Nguyễn Thành Hưng |
@@ -35,105 +35,105 @@ Description automatically generated](media/image1.png){width="1.5666666666666667
 
 [DANH MỤC HÌNH ẢNH](#_Toc231759728)
 
-[PHẦN 1: MỞ ĐẦU [1](#_Toc231759729)](#_Toc231759729)
+[PHẦN 1: MỞ ĐẦU [1](#\_Toc231759729)](#_Toc231759729)
 
-[1.1. Lý do chọn đề tài [1](#_Toc231759730)](#_Toc231759730)
+[1.1. Lý do chọn đề tài [1](#\_Toc231759730)](#_Toc231759730)
 
-[1.2. Mục tiêu nghiên cứu [2](#_Toc231759731)](#_Toc231759731)
+[1.2. Mục tiêu nghiên cứu [2](#\_Toc231759731)](#_Toc231759731)
 
-[1.3. Đối tượng và phạm vi nghiên cứu: [3](#_Toc231759732)](#_Toc231759732)
+[1.3. Đối tượng và phạm vi nghiên cứu: [3](#\_Toc231759732)](#_Toc231759732)
 
-[1.3.1. Đối tượng nghiên cứu [3](#_Toc231759733)](#_Toc231759733)
+[1.3.1. Đối tượng nghiên cứu [3](#\_Toc231759733)](#_Toc231759733)
 
-[1.3.2. Phạm vi nghiên cứu [3](#_Toc231759734)](#_Toc231759734)
+[1.3.2. Phạm vi nghiên cứu [3](#\_Toc231759734)](#_Toc231759734)
 
-[PHẦN 2: CƠ SỞ LÝ THUYẾT [4](#_Toc231759735)](#_Toc231759735)
+[PHẦN 2: CƠ SỞ LÝ THUYẾT [4](#\_Toc231759735)](#_Toc231759735)
 
-[2.1. Tổng quan về xử lý ảnh số và tiền xử lý (Digital Image Processing) [4](#_Toc231759736)](#_Toc231759736)
+[2.1. Tổng quan về xử lý ảnh số và tiền xử lý (Digital Image Processing) [4](#\_Toc231759736)](#_Toc231759736)
 
-[2.1.1. Khái niệm cơ bản và quy trình xử lý ảnh [4](#_Toc231759737)](#_Toc231759737)
+[2.1.1. Khái niệm cơ bản và quy trình xử lý ảnh [4](#\_Toc231759737)](#_Toc231759737)
 
-[2.1.2. Kỹ thuật lọc và khử nhiễu trong miền không gian (Spatial Domain Filtering) [5](#_Toc231759738)](#_Toc231759738)
+[2.1.2. Kỹ thuật lọc và khử nhiễu trong miền không gian (Spatial Domain Filtering) [5](#\_Toc231759738)](#_Toc231759738)
 
-[2.1.3. Cải thiện độ tương phản và cân bằng sáng (Histogram Equalization) trong môi trường thực tế [6](#_Toc231759739)](#_Toc231759739)
+[2.1.3. Cải thiện độ tương phản và cân bằng sáng (Histogram Equalization) trong môi trường thực tế [6](#\_Toc231759739)](#_Toc231759739)
 
-[2.2. Trích xuất đặc trưng và nhận dạng mẫu (Feature Extraction & Pattern Recognition) [6](#_Toc231759740)](#_Toc231759740)
+[2.2. Trích xuất đặc trưng và nhận dạng mẫu (Feature Extraction & Pattern Recognition) [6](#\_Toc231759740)](#_Toc231759740)
 
-[2.2.1. Trích xuất đặc trưng hình học (Shape features) và vùng biên [6](#_Toc231759741)](#_Toc231759741)
+[2.2.1. Trích xuất đặc trưng hình học (Shape features) và vùng biên [6](#\_Toc231759741)](#_Toc231759741)
 
-[2.2.2. Đặc trưng động học (Motion features) trong phân loại hành vi [6](#_Toc231759742)](#_Toc231759742)
+[2.2.2. Đặc trưng động học (Motion features) trong phân loại hành vi [6](#\_Toc231759742)](#_Toc231759742)
 
-[2.2.3. Hạn chế của các phương pháp trích xuất đặc trưng truyền thống (Hand-crafted features) [6](#_Toc231759743)](#_Toc231759743)
+[2.2.3. Hạn chế của các phương pháp trích xuất đặc trưng truyền thống (Hand-crafted features) [6](#\_Toc231759743)](#_Toc231759743)
 
-[2.3. Mạng nơ-ron tích chập và mô hình YOLOv8 [6](#_Toc231759744)](#_Toc231759744)
+[2.3. Mạng nơ-ron tích chập và mô hình YOLOv8 [6](#\_Toc231759744)](#_Toc231759744)
 
-[2.3.1 Kiến trúc mạng CNN và nguyên lý trích xuất đặc trưng tự động [6](#_Toc231759745)](#_Toc231759745)
+[2.3.1 Kiến trúc mạng CNN và nguyên lý trích xuất đặc trưng tự động [6](#\_Toc231759745)](#_Toc231759745)
 
-[2.3.2. Tổng quan bài toán phát hiện đối tượng (Object Detection) và sự tiến hóa của họ YOLO [6](#_Toc231759746)](#_Toc231759746)
+[2.3.2. Tổng quan bài toán phát hiện đối tượng (Object Detection) và sự tiến hóa của họ YOLO [6](#\_Toc231759746)](#_Toc231759746)
 
-[2.3.3. Kiến trúc YOLOv8-pose: Tích hợp phát hiện người và nội suy điểm neo (keypoints) [6](#_Toc231759747)](#_Toc231759747)
+[2.3.3. Kiến trúc YOLOv8-pose: Tích hợp phát hiện người và nội suy điểm neo (keypoints) [6](#\_Toc231759747)](#_Toc231759747)
 
-[2.4. Bài toán ước lượng tư thế người (Human Pose Estimation) [6](#_Toc231759748)](#_Toc231759748)
+[2.4. Bài toán ước lượng tư thế người (Human Pose Estimation) [6](#\_Toc231759748)](#_Toc231759748)
 
-[2.4.1. Khái niệm và các hướng tiếp cận hiện đại (Top-down vs Bottom-up) [7](#_Toc231759749)](#_Toc231759749)
+[2.4.1. Khái niệm và các hướng tiếp cận hiện đại (Top-down vs Bottom-up) [7](#\_Toc231759749)](#_Toc231759749)
 
-[2.4.2. Hệ quy chiếu COCO-17 Keypoints và phương pháp biểu diễn bộ khung xương (Skeleton) [7](#_Toc231759750)](#_Toc231759750)
+[2.4.2. Hệ quy chiếu COCO-17 Keypoints và phương pháp biểu diễn bộ khung xương (Skeleton) [7](#\_Toc231759750)](#_Toc231759750)
 
-[2.4.3. Chuỗi tư thế (Skeleton Sequence) - Trích xuất và định dạng dữ liệu đầu vào [7](#_Toc231759751)](#_Toc231759751)
+[2.4.3. Chuỗi tư thế (Skeleton Sequence) - Trích xuất và định dạng dữ liệu đầu vào [7](#\_Toc231759751)](#_Toc231759751)
 
-[2.5. Nhận dạng hành động theo chuỗi không gian - thời gian (Spatio-Temporal Action Recognition) [7](#_Toc231759752)](#_Toc231759752)
+[2.5. Nhận dạng hành động theo chuỗi không gian - thời gian (Spatio-Temporal Action Recognition) [7](#\_Toc231759752)](#_Toc231759752)
 
-[2.5.1. Tầm quan trọng của phân tích chuỗi thời gian so với phân tích khung hình tĩnh (Static frame) [7](#_Toc231759753)](#_Toc231759753)
+[2.5.1. Tầm quan trọng của phân tích chuỗi thời gian so với phân tích khung hình tĩnh (Static frame) [7](#\_Toc231759753)](#_Toc231759753)
 
-[2.5.2. Chuyển đổi dữ liệu động học: Trích xuất đặc trưng vật lý và chuẩn hóa tư thế (Pose Normalization) [7](#_Toc231759754)](#_Toc231759754)
+[2.5.2. Chuyển đổi dữ liệu động học: Trích xuất đặc trưng vật lý và chuẩn hóa tư thế (Pose Normalization) [7](#\_Toc231759754)](#_Toc231759754)
 
-[2.5.3. Kiến trúc mạng PoseBiGRU: Cơ chế phân tích luồng không gian - thời gian bằng BiGRU và Attention [7](#_Toc231759755)](#_Toc231759755)
+[2.5.3. Kiến trúc mạng PoseBiGRU: Cơ chế phân tích luồng không gian - thời gian bằng BiGRU và Attention [7](#\_Toc231759755)](#_Toc231759755)
 
-[2.6. Học chuyển giao (Transfer Learning) và chiến lược Fine-tuning [7](#_Toc231759756)](#_Toc231759756)
+[2.6. Học chuyển giao (Transfer Learning) và chiến lược Fine-tuning [7](#\_Toc231759756)](#_Toc231759756)
 
-[2.6.1. Nguyên lý học chuyển giao và tính cấp thiết trong bài toán phát hiện té ngã [7](#_Toc231759757)](#_Toc231759757)
+[2.6.1. Nguyên lý học chuyển giao và tính cấp thiết trong bài toán phát hiện té ngã [7](#\_Toc231759757)](#_Toc231759757)
 
-[2.6.2. Phân tích mô hình PoseBiGRU tiền huấn luyện (Pre-trained on NTU RGB+D/Kinetics) [7](#_Toc231759758)](#_Toc231759758)
+[2.6.2. Phân tích mô hình PoseBiGRU tiền huấn luyện (Pre-trained on NTU RGB+D/Kinetics) [7](#\_Toc231759758)](#_Toc231759758)
 
-[2.6.3. Kỹ thuật Data Augmentation (Tăng cường dữ liệu) chuyên biệt cho skeleton sequence [7](#_Toc231759759)](#_Toc231759759)
+[2.6.3. Kỹ thuật Data Augmentation (Tăng cường dữ liệu) chuyên biệt cho skeleton sequence [7](#\_Toc231759759)](#_Toc231759759)
 
-[2.6.4. Chiến lược Fine-tuning giải quyết mất cân bằng dữ liệu cho 2 nhãn: FALL và NON-FALL [7](#_Toc231759760)](#_Toc231759760)
+[2.6.4. Chiến lược Fine-tuning giải quyết mất cân bằng dữ liệu cho 2 nhãn: FALL và NON-FALL [7](#\_Toc231759760)](#_Toc231759760)
 
-[PHẦN 3: PHƯƠNG PHÁP VÀ THIẾT KẾ HỆ THỐNG ĐỀ XUẤT [8](#_Toc231759761)](#_Toc231759761)
+[PHẦN 3: PHƯƠNG PHÁP VÀ THIẾT KẾ HỆ THỐNG ĐỀ XUẤT [8](#\_Toc231759761)](#_Toc231759761)
 
-[3.1. Kiến trúc tổng quát của hệ thống (System Architecture) [8](#_Toc231759762)](#_Toc231759762)
+[3.1. Kiến trúc tổng quát của hệ thống (System Architecture) [8](#\_Toc231759762)](#_Toc231759762)
 
-[3.2. Thu nhận và tiền xử lý dữ liệu video (DIP Preprocessing) [8](#_Toc231759763)](#_Toc231759763)
+[3.2. Thu nhận và tiền xử lý dữ liệu video (DIP Preprocessing) [8](#\_Toc231759763)](#_Toc231759763)
 
-[3.3. Nhận dạng và trích xuất đặc trưng tư thế bằng YOLOv8-Pose [8](#_Toc231759764)](#_Toc231759764)
+[3.3. Nhận dạng và trích xuất đặc trưng tư thế bằng YOLOv8-Pose [8](#\_Toc231759764)](#_Toc231759764)
 
-[3.4. Mô hình hóa chuỗi động học bằng cửa sổ trượt (Sliding Window) [9](#_Toc231759765)](#_Toc231759765)
+[3.4. Mô hình hóa chuỗi động học bằng cửa sổ trượt (Sliding Window) [9](#\_Toc231759765)](#_Toc231759765)
 
-[3.5. Phân loại hành vi té ngã bằng mạng PoseBiGRU [9](#_Toc231759766)](#_Toc231759766)
+[3.5. Phân loại hành vi té ngã bằng mạng PoseBiGRU [9](#\_Toc231759766)](#_Toc231759766)
 
-[3.6. Module cảnh báo thời gian thực (Real-time Alerting) [10](#_Toc231759767)](#_Toc231759767)
+[3.6. Module cảnh báo thời gian thực (Real-time Alerting) [10](#\_Toc231759767)](#_Toc231759767)
 
-[PHẦN 4: THỰC NGHIỆM VÀ ĐÁNH GIÁ HỆ THỐNG [11](#_Toc231759768)](#_Toc231759768)
+[PHẦN 4: THỰC NGHIỆM VÀ ĐÁNH GIÁ HỆ THỐNG [11](#\_Toc231759768)](#_Toc231759768)
 
-[4.1. Môi trường, công cụ và tài nguyên phát triển [11](#_Toc231759769)](#_Toc231759769)
+[4.1. Môi trường, công cụ và tài nguyên phát triển [11](#\_Toc231759769)](#_Toc231759769)
 
-[4.2. Bộ dữ liệu (Dataset) và quy trình chuẩn bị dữ liệu [11](#_Toc231759770)](#_Toc231759770)
+[4.2. Bộ dữ liệu (Dataset) và quy trình chuẩn bị dữ liệu [11](#\_Toc231759770)](#_Toc231759770)
 
-[4.3. Các độ đo đánh giá hiệu năng (Evaluation Metrics) [12](#_Toc231759771)](#_Toc231759771)
+[4.3. Các độ đo đánh giá hiệu năng (Evaluation Metrics) [12](#\_Toc231759771)](#_Toc231759771)
 
-[4.4. Kịch bản thử nghiệm và đánh giá độ bền vững (Test cases & Robustness) [12](#_Toc231759772)](#_Toc231759772)
+[4.4. Kịch bản thử nghiệm và đánh giá độ bền vững (Test cases & Robustness) [12](#\_Toc231759772)](#_Toc231759772)
 
-[References [14](#_Toc231759773)](#_Toc231759773)
+[References [14](#\_Toc231759773)](#_Toc231759773)
 
-[]{#_Toc231759728 .anchor}DANH MỤC HÌNH ẢNH
+[]{#\_Toc231759728 .anchor}DANH MỤC HÌNH ẢNH
 
-[Hình 2. 1. Quy trình xử lý ảnh [5](#_Toc231759705)](#_Toc231759705)
+[Hình 2. 1. Quy trình xử lý ảnh [5](#\_Toc231759705)](#_Toc231759705)
 
-[Hình 3. 1. Sơ đồ pipeline đề xuất cho hệ thống [8](#_Toc231759707)](#_Toc231759707)
+[Hình 3. 1. Sơ đồ pipeline đề xuất cho hệ thống [8](#\_Toc231759707)](#_Toc231759707)
 
-[]{#_Toc231759729 .anchor}PHẦN 1: MỞ ĐẦU
+[]{#\_Toc231759729 .anchor}PHẦN 1: MỞ ĐẦU
 
-[]{#_Toc231759730 .anchor}1.1. Lý do chọn đề tài
+[]{#\_Toc231759730 .anchor}1.1. Lý do chọn đề tài
 
 Hiện nay, sự già hóa dân số đang đặt ra những thách thức to lớn cho toàn cầu trong việc xây dựng một môi trường sống độc lập và an toàn cho người cao tuổi. Trong đó, té ngã được ghi nhận là một trong những rủi ro sức khỏe nghiêm trọng nhất. Theo báo cáo từ Cẩm nang Y khoa MSD (MSD Manuals), ở những người từ 65 tuổi trở lên, té ngã là nguyên nhân hàng đầu gây tử vong do chấn thương và là nguyên nhân tử vong đứng thứ bảy nói chung \[1\]. Người cao tuổi có nguy cơ vấp ngã rất cao do sự suy giảm chức năng vận động, thị lực kém và các bệnh lý nền đi kèm \[2\]. Nghiên cứu cũng chỉ ra rằng, việc phát hiện chậm trễ và thiếu can thiệp y tế kịp thời sau khi ngã sẽ làm tăng đột biến tỷ lệ mắc các biến chứng nghiêm trọng như gãy xương, chấn thương sọ não, thậm chí dẫn đến tử vong. Do đó, việc thiết lập một hệ thống giám sát nhằm phát hiện và cảnh báo tức thời sự cố té ngã là yêu cầu vô cùng cấp thiết.
 
@@ -143,7 +143,7 @@ Hiện nay, sự già hóa dân số đang đặt ra những thách thức to l�
 
 Nhận thấy rõ tính cấp thiết từ thực tiễn xã hội cùng với tiềm năng to lớn của công nghệ, nhóm quyết định lựa chọn đề tài: **"Xây dựng hệ thống cảnh báo té ngã tự động cho người cao tuổi"**. Đề tài này không chỉ mang ý nghĩa nhân văn sâu sắc trong việc bảo vệ sức khỏe và tính mạng cộng đồng, mà còn là cơ hội tuyệt vời để nhóm nghiên cứu áp dụng trực tiếp các nền tảng kiến thức cốt lõi của môn học xử lý ảnh số (như tiền xử lý ảnh, phân vùng ảnh, và nhận dạng mẫu) vào một bài toán thực tế của kỹ thuật y sinh và an ninh thông minh.
 
-[]{#_Toc231759731 .anchor}1.2. Mục tiêu nghiên cứu
+[]{#\_Toc231759731 .anchor}1.2. Mục tiêu nghiên cứu
 
 Mục tiêu tổng quan của đề tài là nghiên cứu, thiết kế và triển khai một hệ thống giám sát tự động không xâm nhập (unobtrusive monitoring system) dựa trên công nghệ Thị giác máy tính (Computer Vision) và Xử lý ảnh số (Digital Image Processing). Hệ thống này nhằm mục đích theo dõi, phát hiện sớm và đưa ra cảnh báo theo thời gian thực (real-time) đối với hành vi té ngã của người cao tuổi trong môi trường sống trong nhà (indoor environment), từ đó hỗ trợ giảm thiểu tối đa các biến chứng nguy hiểm do việc phát hiện chậm trễ gây ra.
 
@@ -157,15 +157,15 @@ Mục tiêu tổng quan của đề tài là nghiên cứu, thiết kế và tri
 
 **Về mặt thiết kế hệ thống cảnh báo:** Hoàn thiện module đầu ra (output module) có khả năng xử lý tức thời. Khi hệ thống xác định có sự cố té ngã, ngay lập tức (\< 30 giây) kích hoạt các tín hiệu cảnh báo (như phát âm thanh hoặc đánh dấu khung cảnh báo đỏ trực quan trên màn hình giám sát) để người chăm sóc hoặc nhân viên y tế có thể can thiệp kịp thời.
 
-[]{#_Toc231759732 .anchor}1.3. Đối tượng và phạm vi nghiên cứu:
+[]{#\_Toc231759732 .anchor}1.3. Đối tượng và phạm vi nghiên cứu:
 
-[]{#_Toc231759733 .anchor}1.3.1. Đối tượng nghiên cứu
+[]{#\_Toc231759733 .anchor}1.3.1. Đối tượng nghiên cứu
 
 Đối tượng giám sát thực tế: Hành vi và tư thế động học của con người (hướng tới tệp người dùng là người cao tuổi) trong không gian sinh hoạt. Trọng tâm nghiên cứu là sự biến thiên về mặt hình học và quỹ đạo chuyển động nhằm phân biệt rõ ràng giữa sự cố "té ngã vô thức" và các hoạt động sinh hoạt thường ngày (Activities of Daily Living - ADLs) như đi lại, ngồi, nằm có chủ ý, hoặc cúi gập người.
 
 Đối tượng xử lý kỹ thuật: Các khung hình (frames) tĩnh và chuỗi khung hình liên tục được trích xuất từ nguồn video kỹ thuật số. Cụ thể là các đặc trưng hình thái (khung bao đối tượng - Bounding Box, hoặc bộ khung xương - Skeletal Keypoints) của con người trên không gian ảnh 2D.
 
-[]{#_Toc231759734 .anchor}1.3.2. Phạm vi nghiên cứu
+[]{#\_Toc231759734 .anchor}1.3.2. Phạm vi nghiên cứu
 
 Nhằm đảm bảo tính khả thi về mặt thời gian và bám sát mục tiêu của học phần Xử lý ảnh số, đề tài được giới hạn trong các điều kiện cụ thể sau:
 
@@ -189,13 +189,13 @@ Sử dụng các kỹ thuật Xử lý ảnh số cơ bản ở giai đoạn ti�
 
 Thuật toán phân tích té ngã được giới hạn trong việc tính toán logic toán học dựa trên sự thay đổi của khung bao đối tượng (tỷ lệ chênh lệch giữa chiều cao và chiều rộng, tính toán trọng tâm) trong một khung thời gian ngắn, giúp đảm bảo tốc độ khung hình/giây (FPS) cao, đáp ứng yêu cầu cảnh báo tức thời. Khóa luồng nghiên cứu không đi sâu vào việc huấn luyện các mạng nơ-ron phân tích chuỗi thời gian (như RNN/LSTM) đòi hỏi tài nguyên điện toán khổng lồ.
 
-[]{#_Toc231759735 .anchor}PHẦN 2: CƠ SỞ LÝ THUYẾT
+[]{#\_Toc231759735 .anchor}PHẦN 2: CƠ SỞ LÝ THUYẾT
 
-[]{#_Toc231759736 .anchor}2.1. Tổng quan về xử lý ảnh số và tiền xử lý (Digital Image Processing)
+[]{#\_Toc231759736 .anchor}2.1. Tổng quan về xử lý ảnh số và tiền xử lý (Digital Image Processing)
 
 Tiền xử lý ảnh (Preprocessing) là giai đoạn nền tảng và mang tính quyết định đối với hiệu năng của bất kỳ hệ thống thị giác máy tính nào. Trong phạm vi đề tài, các kỹ thuật xử lý ảnh số được áp dụng nhằm cải thiện chất lượng dữ liệu video đầu vào từ camera giám sát, triệt tiêu các yếu tố nhiễu loạn của môi trường, qua đó tạo ra nguồn dữ liệu tối ưu nhất trước khi đưa vào mạng nơ-ron học sâu để nhận dạng tư thế người.
 
-[]{#_Toc231759737 .anchor}2.1.1. Khái niệm cơ bản và quy trình xử lý ảnh
+[]{#\_Toc231759737 .anchor}2.1.1. Khái niệm cơ bản và quy trình xử lý ảnh
 
 Xử lý ảnh số (Digital Image Processing - DIP) là quá trình áp dụng các thuật toán máy tính để thao tác, phân tích và biến đổi một hình ảnh kỹ thuật số nhằm nâng cao chất lượng thị giác hoặc trích xuất các thông tin định lượng hữu ích. Theo kiến trúc chuẩn của một hệ thống thị giác máy, quy trình xử lý ảnh cơ bản thường trải qua các giai đoạn nối tiếp nhau bao gồm: Thu nhận ảnh (Image Acquisition), Nâng cao chất lượng ảnh (Image Enhancement), Khôi phục ảnh (Image Restoration), Phân vùng ảnh (Segmentation) và Trích xuất đặc trưng (Feature/Representation Extraction) \[6\]. Đối với hệ thống cảnh báo té ngã trong nhà, dữ liệu hình ảnh thô thường xuyên chứa nhiều thông tin dư thừa. Do đó, quy trình tiền xử lý đóng vai trò chắt lọc thông tin, giúp mô hình phân tích hành vi phía sau tập trung hoàn toàn vào đối tượng con người thay vì bị phân tâm bởi bối cảnh xung quanh.
 
@@ -204,59 +204,59 @@ Xử lý ảnh số (Digital Image Processing - DIP) là quá trình áp dụng 
 <figcaption><p><span id="_Toc231759705" class="anchor"></span>Hình 2. 1. Quy trình xử lý ảnh</p></figcaption>
 </figure>
 
-[]{#_Toc231759738 .anchor}2.1.2. Kỹ thuật lọc và khử nhiễu trong miền không gian (Spatial Domain Filtering)
+[]{#\_Toc231759738 .anchor}2.1.2. Kỹ thuật lọc và khử nhiễu trong miền không gian (Spatial Domain Filtering)
 
 Kỹ thuật xử lý trong miền không gian (Spatial Domain) đề cập đến các phương pháp can thiệp và biến đổi trực tiếp giá trị của từng điểm ảnh (pixel) trên ma trận ảnh số, được biểu diễn qua hàm biến đổi $g(x,y)\  = \ T\lbrack f(x,y)\rbrack$ \[7\]. Trong môi trường hoạt động thực tế, cảm biến quang học của camera giám sát thường xuyên bị ảnh hưởng bởi nhiễu hạt (Gaussian noise) hoặc nhiễu muối tiêu (Salt-and-pepper noise) do điều kiện thiếu sáng. Để giải quyết thách thức này, các bộ lọc không gian làm mịn (Smoothing/Lowpass Spatial Filters) được tích hợp vào hệ thống. Cụ thể, bộ lọc Gaussian (Gaussian Blur) hoạt động dựa trên nguyên lý tính trung bình có trọng số của các điểm ảnh lân cận (neighborhood operations) được ưu tiên sử dụng. Khác với bộ lọc trung bình thông thường, bộ lọc Gaussian có khả năng khử nhiễu tần số cao (high-frequency noise) vô cùng hiệu quả nhưng vẫn bảo toàn được các đường biên (edges) cấu trúc cơ thể người \[7\]. Việc bảo toàn biên sắc nét này là điều kiện tiên quyết để mô hình nhận dạng phía sau có thể nội suy chính xác các điểm neo (keypoints) của bộ khung xương.
 
-[]{#_Toc231759739 .anchor}2.1.3. Cải thiện độ tương phản và cân bằng sáng (Histogram Equalization) trong môi trường thực tế
+[]{#\_Toc231759739 .anchor}2.1.3. Cải thiện độ tương phản và cân bằng sáng (Histogram Equalization) trong môi trường thực tế
 
 Một thách thức đặc thù đối với các hệ thống giám sát chăm sóc sức khỏe người cao tuổi là sự bất ổn định về nguồn sáng tại không gian nhà ở (chẳng hạn như hiện tượng ngược sáng từ cửa sổ, ánh sáng yếu vào ban đêm, hoặc các góc khuất tạo bóng râm). Các máy ảnh và cảm biến hình ảnh tiêu chuẩn thường bị giới hạn về dải động (dynamic range), dẫn đến việc các vùng tối của bức ảnh bị mất hoàn toàn chi tiết. Để khắc phục, kỹ thuật xử lý lược đồ xám (Histogram Processing) được áp dụng nhằm tái phân bố lại tần suất xuất hiện của các giá trị cường độ sáng \[7\]. Phương pháp Cân bằng lược đồ xám (Histogram Equalization) sẽ kéo giãn phân bố cường độ sáng từ vùng tập trung hẹp sang toàn bộ dải giá trị khả dụng (từ 0 đến 255 đối với ảnh 8-bit). Quá trình này giúp nâng cao độ tương phản tổng thể một cách tự nhiên, khôi phục các chi tiết chìm trong vùng tối, đảm bảo rằng đối tượng sinh học luôn được tách biệt rõ ràng khỏi phông nền (background), qua đó duy trì tính liên tục của chuỗi dữ liệu đầu vào trong mọi điều kiện ánh sáng.
 
-[]{#_Toc231759740 .anchor}2.2. Trích xuất đặc trưng và nhận dạng mẫu (Feature Extraction & Pattern Recognition)
+[]{#\_Toc231759740 .anchor}2.2. Trích xuất đặc trưng và nhận dạng mẫu (Feature Extraction & Pattern Recognition)
 
-[]{#_Toc231759741 .anchor}2.2.1. Trích xuất đặc trưng hình học (Shape features) và vùng biên
+[]{#\_Toc231759741 .anchor}2.2.1. Trích xuất đặc trưng hình học (Shape features) và vùng biên
 
-[]{#_Toc231759742 .anchor}2.2.2. Đặc trưng động học (Motion features) trong phân loại hành vi
+[]{#\_Toc231759742 .anchor}2.2.2. Đặc trưng động học (Motion features) trong phân loại hành vi
 
-[]{#_Toc231759743 .anchor}2.2.3. Hạn chế của các phương pháp trích xuất đặc trưng truyền thống (Hand-crafted features)
+[]{#\_Toc231759743 .anchor}2.2.3. Hạn chế của các phương pháp trích xuất đặc trưng truyền thống (Hand-crafted features)
 
-[]{#_Toc231759744 .anchor}2.3. Mạng nơ-ron tích chập và mô hình YOLOv8
+[]{#\_Toc231759744 .anchor}2.3. Mạng nơ-ron tích chập và mô hình YOLOv8
 
-[]{#_Toc231759745 .anchor}2.3.1 Kiến trúc mạng CNN và nguyên lý trích xuất đặc trưng tự động
+[]{#\_Toc231759745 .anchor}2.3.1 Kiến trúc mạng CNN và nguyên lý trích xuất đặc trưng tự động
 
-[]{#_Toc231759746 .anchor}2.3.2. Tổng quan bài toán phát hiện đối tượng (Object Detection) và sự tiến hóa của họ YOLO
+[]{#\_Toc231759746 .anchor}2.3.2. Tổng quan bài toán phát hiện đối tượng (Object Detection) và sự tiến hóa của họ YOLO
 
-[]{#_Toc231759747 .anchor}2.3.3. Kiến trúc YOLOv8-pose: Tích hợp phát hiện người và nội suy điểm neo (keypoints)
+[]{#\_Toc231759747 .anchor}2.3.3. Kiến trúc YOLOv8-pose: Tích hợp phát hiện người và nội suy điểm neo (keypoints)
 
-[]{#_Toc231759748 .anchor}2.4. Bài toán ước lượng tư thế người (Human Pose Estimation)
+[]{#\_Toc231759748 .anchor}2.4. Bài toán ước lượng tư thế người (Human Pose Estimation)
 
-[]{#_Toc231759749 .anchor}2.4.1. Khái niệm và các hướng tiếp cận hiện đại (Top-down vs Bottom-up)
+[]{#\_Toc231759749 .anchor}2.4.1. Khái niệm và các hướng tiếp cận hiện đại (Top-down vs Bottom-up)
 
-[]{#_Toc231759750 .anchor}2.4.2. Hệ quy chiếu COCO-17 Keypoints và phương pháp biểu diễn bộ khung xương (Skeleton)
+[]{#\_Toc231759750 .anchor}2.4.2. Hệ quy chiếu COCO-17 Keypoints và phương pháp biểu diễn bộ khung xương (Skeleton)
 
-[]{#_Toc231759751 .anchor}2.4.3. Chuỗi tư thế (Skeleton Sequence) - Trích xuất và định dạng dữ liệu đầu vào
+[]{#\_Toc231759751 .anchor}2.4.3. Chuỗi tư thế (Skeleton Sequence) - Trích xuất và định dạng dữ liệu đầu vào
 
-[]{#_Toc231759752 .anchor}2.5. Nhận dạng hành động theo chuỗi không gian - thời gian (Spatio-Temporal Action Recognition)
+[]{#\_Toc231759752 .anchor}2.5. Nhận dạng hành động theo chuỗi không gian - thời gian (Spatio-Temporal Action Recognition)
 
-[]{#_Toc231759753 .anchor}2.5.1. Tầm quan trọng của phân tích chuỗi thời gian so với phân tích khung hình tĩnh (Static frame)
+[]{#\_Toc231759753 .anchor}2.5.1. Tầm quan trọng của phân tích chuỗi thời gian so với phân tích khung hình tĩnh (Static frame)
 
-[]{#_Toc231759754 .anchor}2.5.2. Chuyển đổi dữ liệu động học: Trích xuất đặc trưng vật lý và chuẩn hóa tư thế (Pose Normalization)
+[]{#\_Toc231759754 .anchor}2.5.2. Chuyển đổi dữ liệu động học: Trích xuất đặc trưng vật lý và chuẩn hóa tư thế (Pose Normalization)
 
-[]{#_Toc231759755 .anchor}2.5.3. Kiến trúc mạng PoseBiGRU: Cơ chế phân tích luồng không gian - thời gian bằng BiGRU và Attention
+[]{#\_Toc231759755 .anchor}2.5.3. Kiến trúc mạng PoseBiGRU: Cơ chế phân tích luồng không gian - thời gian bằng BiGRU và Attention
 
-[]{#_Toc231759756 .anchor}2.6. Học chuyển giao (Transfer Learning) và chiến lược Fine-tuning
+[]{#\_Toc231759756 .anchor}2.6. Học chuyển giao (Transfer Learning) và chiến lược Fine-tuning
 
-[]{#_Toc231759757 .anchor}2.6.1. Nguyên lý học chuyển giao và tính cấp thiết trong bài toán phát hiện té ngã
+[]{#\_Toc231759757 .anchor}2.6.1. Nguyên lý học chuyển giao và tính cấp thiết trong bài toán phát hiện té ngã
 
-[]{#_Toc231759758 .anchor}2.6.2. Phân tích mô hình PoseBiGRU tiền huấn luyện (Pre-trained on NTU RGB+D/Kinetics)
+[]{#\_Toc231759758 .anchor}2.6.2. Phân tích mô hình PoseBiGRU tiền huấn luyện (Pre-trained on NTU RGB+D/Kinetics)
 
-[]{#_Toc231759759 .anchor}2.6.3. Kỹ thuật Data Augmentation (Tăng cường dữ liệu) chuyên biệt cho skeleton sequence
+[]{#\_Toc231759759 .anchor}2.6.3. Kỹ thuật Data Augmentation (Tăng cường dữ liệu) chuyên biệt cho skeleton sequence
 
-[]{#_Toc231759760 .anchor}2.6.4. Chiến lược Fine-tuning giải quyết mất cân bằng dữ liệu cho 2 nhãn: FALL và NON-FALL
+[]{#\_Toc231759760 .anchor}2.6.4. Chiến lược Fine-tuning giải quyết mất cân bằng dữ liệu cho 2 nhãn: FALL và NON-FALL
 
-[]{#_Toc231759761 .anchor}PHẦN 3: PHƯƠNG PHÁP VÀ THIẾT KẾ HỆ THỐNG ĐỀ XUẤT
+[]{#\_Toc231759761 .anchor}PHẦN 3: PHƯƠNG PHÁP VÀ THIẾT KẾ HỆ THỐNG ĐỀ XUẤT
 
-[]{#_Toc231759762 .anchor}3.1. Kiến trúc tổng quát của hệ thống (System Architecture)
+[]{#\_Toc231759762 .anchor}3.1. Kiến trúc tổng quát của hệ thống (System Architecture)
 
 Thay vì tiếp cận theo hướng phân tích ảnh tĩnh (Static Image Classification) truyền thống vốn dễ gây ra cảnh báo giả, hệ thống được thiết kế dựa trên mô hình phân tích hành động động học theo không gian và thời gian (Spatio-Temporal Action Recognition). Sơ đồ luồng xử lý dữ liệu (Pipeline) của hệ thống bao gồm 6 giai đoạn chính:
 
@@ -265,7 +265,7 @@ Thay vì tiếp cận theo hướng phân tích ảnh tĩnh (Static Image Classi
 <figcaption><p><span id="_Toc231759707" class="anchor"></span>Hình 3. 1. Sơ đồ pipeline đề xuất cho hệ thống</p></figcaption>
 </figure>
 
-[]{#_Toc231759763 .anchor}3.2. Thu nhận và tiền xử lý dữ liệu video (DIP Preprocessing)
+[]{#\_Toc231759763 .anchor}3.2. Thu nhận và tiền xử lý dữ liệu video (DIP Preprocessing)
 
 Để hệ thống hoạt động ổn định trong các điều kiện môi trường thực tế phức tạp (như ánh sáng yếu, bóng râm, nhiễu hạt từ camera giám sát), các kỹ thuật Tiền xử lý ảnh số (Digital Image Processing) được áp dụng trên từng khung hình đầu vào:
 
@@ -273,7 +273,7 @@ Khử nhiễu không gian (Spatial Filtering): Sử dụng bộ lọc Gaussian (
 
 Cải thiện độ tương phản (Contrast Enhancement): Áp dụng kỹ thuật Cân bằng lược đồ xám cục bộ (CLAHE - Contrast Limited Adaptive Histogram Equalization) nhằm khôi phục chi tiết vùng tối, giúp hệ thống theo dõi đối tượng tốt hơn trong môi trường thiếu sáng.
 
-[]{#_Toc231759764 .anchor}3.3. Nhận dạng và trích xuất đặc trưng tư thế bằng YOLOv8-Pose
+[]{#\_Toc231759764 .anchor}3.3. Nhận dạng và trích xuất đặc trưng tư thế bằng YOLOv8-Pose
 
 Sau khi tiền xử lý, chuỗi khung hình được đưa qua mô hình YOLOv8-Pose nhằm thực hiện đồng thời hai tác vụ: phát hiện người (Human Detection) và uớc lượng tư thế (Pose Estimation).
 
@@ -281,7 +281,7 @@ Sau khi tiền xử lý, chuỗi khung hình được đưa qua mô hình YOLOv8
 
 **Đầu ra (Output):** Tại mỗi khung hình, YOLOv8-Pose sẽ nội suy và xuất ra tọa độ không gian 2D $\left( x_{i},y_{i},c_{i} \right)$ của 17 điểm neo (keypoints) quan trọng trên cơ thể người (đầu, vai, khuỷu tay, hông, đầu gối, v.v.), trong đó $c_{i}$ là độ tin cậy (confidence score) của điểm neo đó.
 
-[]{#_Toc231759765 .anchor}3.4. Mô hình hóa chuỗi động học bằng cửa sổ trượt (Sliding Window)
+[]{#\_Toc231759765 .anchor}3.4. Mô hình hóa chuỗi động học bằng cửa sổ trượt (Sliding Window)
 
 Do hành vi té ngã là một quá trình biến thiên liên tục theo thời gian, việc phân tích đơn lẻ từng khung hình là không khả thi. Nhóm nghiên cứu áp dụng thuật toán Cửa sổ trượt (Sliding Window) để gom cụm dữ liệu:
 
@@ -289,7 +289,7 @@ Cửa sổ có kích thước $T$ frames (ví dụ: $T$ = 30 hoặc 40 frames) s
 
 Kết quả thu được là một chuỗi tư thế (Pose Sequence) mô tả quỹ đạo chuyển động của 17 điểm neo trong một khoảng thời gian ngắn (tương đương 1-2 giây thực tế). Chuỗi dữ liệu không gian - thời gian này sẽ là đầu vào cho bộ phân loại hành vi.
 
-[]{#_Toc231759766 .anchor}3.5. Phân loại hành vi té ngã bằng mạng PoseBiGRU
+[]{#\_Toc231759766 .anchor}3.5. Phân loại hành vi té ngã bằng mạng PoseBiGRU
 
 Để xử lý chuỗi Pose Sequence và đưa ra quyết định phân loại cuối cùng (Fall hoặc Non-Fall), hệ thống tích hợp kiến trúc mạng nơ-ron hồi quy hai chiều kết hợp cơ chế chú ý (PoseBiGRU Attention).
 
@@ -297,13 +297,13 @@ Chuẩn hóa tư thế và trích xuất đặc trưng vật lý: Thay vì xử 
 
 **Huấn luyện mô hình (Training):** Mạng PoseBiGRU sẽ được huấn luyện trên bộ dữ liệu NTU RGB+D kết hợp với các dữ liệu đặc thù về té ngã do nhóm thu thập. Việc sử dụng mạng GRU kết hợp cơ chế Temporal Attention giúp mô hình tập trung vào các khung hình có biến động mạnh nhất (thời điểm chạm đất), đồng thời giảm đáng kể số lượng tham số so với các mạng 3D-CNN, đảm bảo tốc độ suy luận (inference) đạt trên 30 FPS ngay cả trên thiết bị phần cứng hạn chế (CPU).
 
-[]{#_Toc231759767 .anchor}3.6. Module cảnh báo thời gian thực (Real-time Alerting)
+[]{#\_Toc231759767 .anchor}3.6. Module cảnh báo thời gian thực (Real-time Alerting)
 
 Khi hàm kích hoạt Softmax ở lớp đầu ra của PoseBiGRU dự đoán nhãn **Fall** với xác suất vượt qua ngưỡng (Threshold) được tinh chỉnh thực nghiệm, hệ thống sẽ lập tức tạo ra cờ báo động (Alert Flag). Tín hiệu này kích hoạt âm thanh cảnh báo tại loa giám sát và đánh dấu khung viền đỏ nổi bật trên màn hình của người chăm sóc, đảm bảo thời gian trễ từ lúc chạm sàn đến lúc cảnh báo là tối thiểu.
 
-[]{#_Toc231759768 .anchor}PHẦN 4: THỰC NGHIỆM VÀ ĐÁNH GIÁ HỆ THỐNG
+[]{#\_Toc231759768 .anchor}PHẦN 4: THỰC NGHIỆM VÀ ĐÁNH GIÁ HỆ THỐNG
 
-[]{#_Toc231759769 .anchor}4.1. Môi trường, công cụ và tài nguyên phát triển
+[]{#\_Toc231759769 .anchor}4.1. Môi trường, công cụ và tài nguyên phát triển
 
 Do hệ thống tích hợp cả hai giai đoạn: Tiền xử lý ảnh truyền thống (DIP) và Phân tích chuỗi động học bằng mạng học sâu 3D-CNN, môi trường thực nghiệm được cấu hình như sau:
 
@@ -317,7 +317,7 @@ Framework Học sâu (Deep Learning): PyTorch để xây dựng, huấn luyện 
 
 Yêu cầu phần cứng: Môi trường huấn luyện có thể dùng GPU cơ bản, nhưng quá trình suy luận (inference) thực tế hoàn toàn có thể chạy mượt mà trên CPU đa luồng (Multi-core CPU).
 
-[]{#_Toc231759770 .anchor}4.2. Bộ dữ liệu (Dataset) và quy trình chuẩn bị dữ liệu
+[]{#\_Toc231759770 .anchor}4.2. Bộ dữ liệu (Dataset) và quy trình chuẩn bị dữ liệu
 
 Dữ liệu huấn luyện và đánh giá được xây dựng qua hai giai đoạn:
 
@@ -327,7 +327,7 @@ Tiền xử lý và chuyển đổi dữ liệu (Data Preparation): Toàn bộ v
 
 Tăng cường dữ liệu (Data Augmentation): Áp dụng các kỹ thuật tăng cường đặc thù cho chuỗi Pose như: cắt xén trục thời gian (temporal cropping) và mô phỏng thay đổi vận tốc để tăng tính tổng quát cho mô hình PoseBiGRU.
 
-[]{#_Toc231759771 .anchor}4.3. Các độ đo đánh giá hiệu năng (Evaluation Metrics)
+[]{#\_Toc231759771 .anchor}4.3. Các độ đo đánh giá hiệu năng (Evaluation Metrics)
 
 Hiệu năng của hệ thống được đánh giá toàn diện trên hai khía cạnh: Độ chính xác của thuật toán và Khả năng đáp ứng thời gian thực.
 
@@ -347,7 +347,7 @@ Tốc độ khung hình (FPS): Đo lường tổng thời gian nội suy của t
 
 Độ trễ cảnh báo (Latency): Thời gian tính từ khi kết thúc hành vi ngã trên video đến khi hệ thống phát tín hiệu cảnh báo.
 
-[]{#_Toc231759772 .anchor}4.4. Kịch bản thử nghiệm và đánh giá độ bền vững (Test cases & Robustness)
+[]{#\_Toc231759772 .anchor}4.4. Kịch bản thử nghiệm và đánh giá độ bền vững (Test cases & Robustness)
 
 Mô hình sau khi fine-tune sẽ được chạy thực nghiệm qua các kịch bản có độ khó tăng dần để kiểm chứng tính bền vững của luồng thuật toán:
 
@@ -362,10 +362,10 @@ Bị che khuất (Occlusion): Thử nghiệm kịch bản đối tượng bị c
 # References
 
 | \[1\] | R. G. Stefanacci và J. R. Wilkinson, "Té ngã ở người cao tuổi," August 2025. \[Trực tuyến\]. Available: https://www.msdmanuals.com/vi/professional/l%C3%A3o-khoa/t%C3%A9-ng%C3%A3-%E1%BB%9F-ng%C6%B0%E1%BB%9Di-cao-tu%E1%BB%95i/t%C3%A9-ng%C3%A3-%E1%BB%9F-ng%C6%B0%E1%BB%9Di-cao-tu%E1%BB%95i. \[Đã truy cập 05 06 2026\]. |
-|----|----|
-| \[2\] | N. K. K. Võ, "Vì sao và nơi nào người cao tuổi dễ bị té ngã?," 22 July 2024. \[Trực tuyến\]. Available: https://www.vinmec.com/vie/bai-viet/vi-sao-va-noi-nao-nguoi-cao-tuoi-de-bi-te-nga-vi. \[Đã truy cập 05 06 2026\]. |
-| \[3\] | A. P. Kaur, E. Nsugbe, A. Drahota, M. Oldfield, I. Mohagheghian and R. A. Sporea, \"State-of-the-art fall detection techniques with emphasis on floor-based systems---A review,\" *Biomedical Engineering Advances,* vol. 9, p. 100179, 2025. |
-| \[4\] | D. Hrubý, E. Hrubá and M. Černý, \"Research of Fall Detection and Fall Prevention Technologies: A Review,\" *Sensors,* vol. 26, p. 1192, 2026. |
-| \[5\] | K. Perli´nski, A. Falty´nski and A. ´. Swietlicka, \"HumanFall Detection with Infrared Imaging: A Comparison of Graph Convolutional Networks and YOLO,\" *sensors,* vol. 26, p. 2794, 2026. |
-| \[6\] | H. V. Dũng, \"Chapter 1. Introduction\". |
-| \[7\] | H. V. Dũng, \"Chapter 2. Image Enhancement in Spatial Domain\". |
+| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| \[2\] | N. K. K. Võ, "Vì sao và nơi nào người cao tuổi dễ bị té ngã?," 22 July 2024. \[Trực tuyến\]. Available: https://www.vinmec.com/vie/bai-viet/vi-sao-va-noi-nao-nguoi-cao-tuoi-de-bi-te-nga-vi. \[Đã truy cập 05 06 2026\].                                                                                                   |
+| \[3\] | A. P. Kaur, E. Nsugbe, A. Drahota, M. Oldfield, I. Mohagheghian and R. A. Sporea, \"State-of-the-art fall detection techniques with emphasis on floor-based systems---A review,\" _Biomedical Engineering Advances,_ vol. 9, p. 100179, 2025.                                                                               |
+| \[4\] | D. Hrubý, E. Hrubá and M. Černý, \"Research of Fall Detection and Fall Prevention Technologies: A Review,\" _Sensors,_ vol. 26, p. 1192, 2026.                                                                                                                                                                              |
+| \[5\] | K. Perli´nski, A. Falty´nski and A. ´. Swietlicka, \"HumanFall Detection with Infrared Imaging: A Comparison of Graph Convolutional Networks and YOLO,\" _sensors,_ vol. 26, p. 2794, 2026.                                                                                                                                 |
+| \[6\] | H. V. Dũng, \"Chapter 1. Introduction\".                                                                                                                                                                                                                                                                                    |
+| \[7\] | H. V. Dũng, \"Chapter 2. Image Enhancement in Spatial Domain\".                                                                                                                                                                                                                                                             |
