@@ -1,3 +1,13 @@
+"""
+Bộ xử lý thuật toán phát hiện té ngã (Inference Worker).
+
+Module này chứa lớp cốt lõi `FallDetectorWorker`, kết hợp hai mô hình học máy:
+  1. YOLO (mặc định yolo11s-pose.pt) để theo dõi người (tracking) và trích xuất 17 điểm mốc (keypoints).
+  2. PoseBiGRU (một mạng GRU hai chiều kết hợp Attention) để phân loại chuỗi chuyển động xem có té ngã hay không.
+Ngoài ra, lớp này còn tích hợp thuật toán kiểm tra dựa trên luật hình học (Rule-based heuristics) làm fallback
+nhằm gia tăng độ chính xác trong các tình huống khó (như bị che khuất một phần cơ thể).
+"""
+
 import collections
 import math
 import time
@@ -17,6 +27,14 @@ from .model import build_model
 
 
 class FallDetectorWorker:
+    """Bộ xử lý trung tâm chạy mô hình YOLOv11-Pose và PoseBiGRU để phát hiện té ngã.
+
+    Lớp này thực hiện việc theo vết đối tượng qua từng khung hình (Object Tracking),
+    trích xuất tọa độ 17 điểm trên cơ thể người, duy trì lịch sử tọa độ dưới dạng chuỗi thời gian,
+    suy diễn qua mạng PoseBiGRU, đồng thời kết hợp kiểm tra luật vật lý/hình học (tỷ lệ bbox, tốc độ rơi,
+    góc nghiêng cơ thể, vị trí đầu-hông) để đưa ra kết luận té ngã tối ưu nhất.
+    """
+
     def __init__(
         self,
         model_path: str = "best.pt",
@@ -26,11 +44,21 @@ class FallDetectorWorker:
         device: str = "auto",
         conf_threshold: float = 0.5,
     ):
+        """Khởi tạo FallDetectorWorker và tải các mô hình AI.
+
+        Args:
+            model_path: Đường dẫn tới file trọng số của mô hình phân loại chuỗi cử chỉ PoseBiGRU.
+            yolo_model: Đường dẫn tới file trọng số YOLO Pose (ultralytics).
+            sequence_length: Độ dài chuỗi keypoints cần thiết để đưa vào mô hình PoseBiGRU (mặc định 30 frame).
+            fps: Tần suất khung hình mục tiêu của mô hình phân loại cử chỉ (mặc định 24.0).
+            device: Thiết bị chạy suy diễn ('auto', 'cpu', 'cuda', hoặc 'mps').
+            conf_threshold: Ngưỡng xác suất để đưa ra kết luận té ngã (mặc định 0.5).
+        """
         self.sequence_length = sequence_length
         self.fps = fps
         self.conf_threshold = conf_threshold
         
-        # Resolve device
+        # Thiết lập thiết bị xử lý (CPU / GPU CUDA)
         if device == "auto":
             if torch.cuda.is_available():
                 self.device = torch.device("cuda")
@@ -41,12 +69,12 @@ class FallDetectorWorker:
             
         print(f"[Worker] Using device: {self.device}")
 
-        # Load YOLO
+        # Tải mô hình YOLO Pose
         if YOLO is None:
             raise RuntimeError("Ultralytics is not installed. Please pip install ultralytics")
         self.yolo = YOLO(yolo_model)
 
-        # Load PoseBiGRU
+        # Khởi tạo mô hình PoseBiGRU
         self.model = build_model(fps=fps).to(self.device)
         self.model.eval()
         
@@ -60,16 +88,16 @@ class FallDetectorWorker:
         except FileNotFoundError:
             print(f"[Worker] WARNING: Model path {model_path} not found. Using untrained weights for testing!")
             
-        # State tracking
+        # Theo dõi trạng thái của từng người theo track_id
         self.person_history: Dict[int, collections.deque] = {}
         self.person_last_seen: Dict[int, float] = {}
         
-        # Output state
+        # Các trạng thái kết quả đầu ra
         self.fall_state: Dict[int, bool] = {}
         self.last_probs: Dict[int, float] = {}
         self.fall_reasons: Dict[int, str] = {}
         
-        # Rule-based fallback states
+        # Các tham số thuật toán dựa trên luật (Rule-based heuristics)
         self.rule_states = collections.defaultdict(lambda: {
             "suspect_count": 0,
             "lying_count": 0,
@@ -94,12 +122,19 @@ class FallDetectorWorker:
         self.core_lower_body_indices = [11, 12]  # Hông trái, hông phải
 
     def _is_valid_person(self, kp: np.ndarray, box_conf: float) -> bool:
-        """
-        Kiểm tra detection có phải là người thật hay không.
+        """Kiểm tra xem đối tượng được detect có phải là người thật hay không (tránh false positive).
+        
         Lọc 3 tầng:
           1. YOLO box confidence >= min_box_conf
-          2. Số keypoint visible >= min_visible_keypoints
-          3. Có ít nhất 1 vai HOẶC 1 hông visible (cấu trúc skeleton người)
+          2. Số lượng keypoint có thể nhìn thấy (confidence > min_kp_conf_for_visible) >= min_visible_keypoints
+          3. Phải nhìn thấy ít nhất một vai HOẶC một hông (cấu trúc tối thiểu của người).
+
+        Args:
+            kp: Mảng numpy chứa tọa độ và conf của 17 keypoints (17, 3).
+            box_conf: Độ tin cậy của bounding box từ YOLO.
+
+        Returns:
+            bool: True nếu là người hợp lệ, ngược lại False.
         """
         # Tầng 1: YOLO detection confidence
         if box_conf < self.min_box_conf:
@@ -127,9 +162,20 @@ class FallDetectorWorker:
         return True
 
     def fit_sequence(self, keypoints: np.ndarray, timestamps: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """
-        Copied from train_hung/train.py PoseWindowDataset.fit_sequence
-        Ensures input tensor is exactly shape (sequence_length, 17, 3)
+        """Điều chỉnh độ dài chuỗi keypoint sao cho khớp chính xác với sequence_length (30 frames).
+
+        Nếu chuỗi ngắn hơn sequence_length, thực hiện đệm (padding) các giá trị và tạo mask.
+        Nếu chuỗi dài hơn, cắt bớt để lấy đúng số khung hình yêu cầu.
+
+        Args:
+            keypoints: Mảng numpy chứa các keypoint lịch sử (N, 17, 3).
+            timestamps: Mảng mốc thời gian tương ứng (N,).
+
+        Returns:
+            Tuple[np.ndarray, np.ndarray, np.ndarray]:
+                - Mảng keypoint đã chuẩn hóa kích thước (sequence_length, 17, 3)
+                - Mảng mốc thời gian chuẩn hóa (sequence_length,)
+                - Mảng mask nhị phân biểu thị phần tử hợp lệ (sequence_length,)
         """
         length = keypoints.shape[0]
         output = np.zeros((self.sequence_length, 17, 3), dtype=np.float32)
@@ -159,6 +205,16 @@ class FallDetectorWorker:
         return output, output_timestamps, mask
 
     def _visible_point(self, kpts, idx, min_conf=0.25):
+        """Lấy tọa độ của một điểm mốc nếu điểm đó đủ tin cậy.
+
+        Args:
+            kpts: Danh sách keypoints trích xuất từ YOLO (17, 3).
+            idx: Chỉ số của keypoint cần lấy.
+            min_conf: Ngưỡng độ tin cậy tối thiểu để coi là nhìn thấy được (mặc định 0.25).
+
+        Returns:
+            np.ndarray: Tọa độ [x, y] nếu hợp lệ, ngược lại None.
+        """
         if kpts is None or len(kpts) <= idx:
             return None
         p = kpts[idx]
@@ -170,6 +226,18 @@ class FallDetectorWorker:
         return np.array([float(p[0]), float(p[1])], dtype=np.float32)
 
     def _mean_visible(self, kpts, indices, min_conf=0.25):
+        """Tính trung bình tọa độ của một nhóm các điểm mốc nhìn thấy được.
+
+        Dùng để tính tâm của hông (trung bình hông trái/hông phải) hoặc tâm của vai.
+
+        Args:
+            kpts: Danh sách keypoints (17, 3).
+            indices: Danh sách các chỉ số keypoint cần tính trung bình.
+            min_conf: Độ tự tin tối thiểu (mặc định 0.25).
+
+        Returns:
+            np.ndarray: Tọa độ trung bình [x, y] hoặc None nếu không có điểm nào hợp lệ.
+        """
         pts = []
         for idx in indices:
             p = self._visible_point(kpts, idx, min_conf)
@@ -180,6 +248,19 @@ class FallDetectorWorker:
         return np.mean(pts, axis=0)
 
     def _angle_to_horizontal(self, p1, p2):
+        """Tính góc nghiêng (độ) của đoạn thẳng nối hai điểm p1 và p2 so với phương ngang.
+
+        Góc trả về nằm trong khoảng [0, 90].
+          - 0 độ: Đoạn thẳng nằm ngang hoàn toàn (tương ứng tư thế nằm ngang).
+          - 90 độ: Đoạn thẳng thẳng đứng (tương ứng tư thế đứng thẳng).
+
+        Args:
+            p1: Điểm thứ nhất [x, y].
+            p2: Điểm thứ hai [x, y].
+
+        Returns:
+            float: Góc nghiêng so với phương ngang (độ).
+        """
         dx = float(p2[0] - p1[0])
         dy = float(p2[1] - p1[1])
         angle = abs(math.degrees(math.atan2(dy, dx)))
@@ -188,6 +269,27 @@ class FallDetectorWorker:
         return angle
 
     def _rule_based_fall_check(self, track_id, bbox, kpts, frame_shape, model_prob, current_time):
+        """Hệ thống đánh giá dựa trên luật hình học (Rule-based) để phát hiện ngã dự phòng.
+
+        Tính toán và kết hợp các đặc trưng vật lý:
+          - Tỷ lệ khung hình (aspect ratio = width / height): nằm ngã sẽ có bbox rộng ngang.
+          - Sự sụt giảm chiều cao đột ngột của bounding box (collapsed).
+          - Tốc độ di chuyển đi xuống của trọng tâm (sudden_motion).
+          - Góc nghiêng thân người (torso angle) giữa vai và hông so với phương ngang.
+          - Mối tương quan vị trí giữa Đầu và Hông (head_below_hip - đầu chúc xuống thấp).
+          - Hệ thống tính điểm (Voting Mechanism) tổng hợp các yếu tố trên để đưa ra kết luận.
+
+        Args:
+            track_id: ID theo vết của người đang kiểm tra.
+            bbox: Tọa độ bounding box [x1, y1, x2, y2].
+            kpts: Mảng keypoints (17, 3) hoặc None.
+            frame_shape: Kích thước khung hình (H, W, C).
+            model_prob: Xác suất ngã tính từ mô hình AI ở frame trước đó.
+            current_time: Mốc thời gian hiện tại (giây).
+
+        Returns:
+            Tuple[bool, str]: Trạng thái ngã (True/False) và lý do ngã cụ thể (e.g. LYING_POSTURE, SUDDEN_COLLAPSE).
+        """
         H, W = frame_shape[:2]
         x1, y1, x2, y2 = map(float, bbox)
         bw = max(1.0, x2 - x1)
@@ -334,6 +436,14 @@ class FallDetectorWorker:
         return is_fall_by_rule, reason
 
     def _check_lost_tracks(self, current_time):
+        """Phát hiện các trường hợp đối tượng bị mất dấu vết (Lost Tracking) ngay sau khi ngã.
+
+        Args:
+            current_time: Mốc thời gian hiện tại (giây).
+
+        Returns:
+            dict[int, str]: Từ điển ánh xạ các track_id bị mất dấu nghi ngờ ngã sang lý do.
+        """
         lost_falls = {}
         for track_id, state in self.rule_states.items():
             last_seen = state.get("last_seen_time")
@@ -360,11 +470,29 @@ class FallDetectorWorker:
         return lost_falls
 
     def process_frame(self, frame: np.ndarray, timestamp: float) -> Tuple[np.ndarray, Dict[int, float]]:
-        """
-        Process a single frame.
+        """Xử lý phân tích một khung hình video đơn lẻ.
+
+        Quy trình xử lý:
+          1. Khởi chạy mô hình YOLO tracking với thuật toán ByteTrack trên khung hình để phát hiện và gán ID cho người.
+          2. Duyệt qua từng ID đối tượng:
+             - Kiểm tra tính hợp lệ (người thật hay vật thể tĩnh) bằng _is_valid_person.
+             - Nếu hợp lệ, chạy cơ chế kiểm tra luật hình học (Rule-based) để phát hiện trạng thái ngã sớm.
+             - Nếu chất lượng keypoint tốt, lưu vào hàng đợi lịch sử chuyển động của ID đó.
+             - Khi lịch sử có đủ ít nhất 5 khung hình, chuẩn hóa dữ liệu thành chuỗi 30 khung hình bằng fit_sequence.
+             - Đưa chuỗi keypoint qua mô hình PoseBiGRU suy diễn ra xác suất té ngã.
+             - Thực hiện làm mượt (smoothing) kết quả bằng Exponential Moving Average (EMA) để tránh nhấp nháy.
+          3. Kiểm tra các ID bị mất dấu xem có nguy cơ ngã trước đó không bằng _check_lost_tracks.
+          4. Dọn dẹp bộ nhớ (xóa lịch sử các ID đã biến mất khỏi màn hình quá lâu).
+          5. Vẽ chú thích (bounding box, skeleton 17 khớp, ID và xác suất ngã) lên khung hình.
+
+        Args:
+            frame: Ảnh BGR đầu vào từ camera (numpy array).
+            timestamp: Thời điểm chụp khung hình hiện tại (giây).
+
         Returns:
-            - frame: annotated frame
-            - fall_probs: Dictionary mapping track_id to fall_probability
+            Tuple[np.ndarray, Dict[int, float]]:
+                - Khung hình đã được vẽ các bounding box, skeleton và thông số cảnh báo (RGB/BGR tùy đầu vào).
+                - Từ điển map giữa track_id và xác suất té ngã (0.0 -> 1.0) của đối tượng đó.
         """
         # YOLO tracking: dùng conf thấp để YOLO không bỏ sót người nằm,
         # nhưng sau đó lọc bằng _is_valid_person() (3 tầng) để loại ghế/vật thể
@@ -375,9 +503,10 @@ class FallDetectorWorker:
             classes=[0], 
             conf=0.10,  # Giữ conf thấp cho YOLO để không miss người nằm
             iou=0.45,
-            imgsz=960,
+            imgsz=640,  # Task 2: giảm từ 960 → 640 → ~2x FPS trên CPU
             tracker="bytetrack.yaml"  # ByteTrack không dùng GMC nên tránh crash optical flow khi frame size thay đổi
         )
+
         
         fall_probs = {}
         self.valid_track_ids = set()
